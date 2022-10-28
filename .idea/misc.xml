@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_close_black_24dp.xml" value="0.2555" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_done_black_24dp.xml" value="0.2555" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_search_black_24dp.xml" value="0.2555" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2555" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/content_main.xml" value="0.14722222222222223" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_event_adding.xml" value="0.33" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_event_list.xml" value="0.1" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_first.xml" value="0.25" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_second.xml" value="0.2105978260869565" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/item_layout_user.xml" value="0.33" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/menu/create_and_edite_event.xml" value="0.22" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/menu/event_create_and_edit_menu.xml" value="0.29379485014774165" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/menu/menu_main.xml" value="0.17314814814814813" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

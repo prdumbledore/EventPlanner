@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Event Planner</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="event_adder_str">Add New Event</string>
+    <string name="event_create_str">Event Create</string>
+    <string name="event_edit_str">Event Edit</string>
+    <string name="event_name">Event Name</string>
+    <string name="weather_temp">9°C</string>
+    <string name="weather_icon">Weather Icon</string>
+    <string name="card_event_transition_name">Transition Name for Card</string>
+    <string name="cancel">Cancel</string>
+    <string name="content_description_cancel">Cancel operation</string>
+    <string name="done">Done</string>
+    <string name="content_description_done">Done operation</string>
+    <string name="event_description">Event Description</string>
+    <string name="pick_date">Event Date</string>
+    <string name="event_city_name">Choose City</string>
+    <string name="event_address_line">Address Line</string>
+    <string name="content_description_search_icon">Search Icon</string>
+
+
+</resources>
