@@ -12,17 +12,18 @@
         tools:layout="@layout/fragment_event_list">
 
         <action
-            android:id="@+id/action_EventListFragment_to_EventAddingFragment"
-            app:destination="@id/EventAddingFragment" />
+            android:id="@+id/action_EventListFragment_to_EventAddAndEditFragment"
+            app:destination="@id/EventAddAndEditFragment" />
     </fragment>
     <fragment
-        android:id="@+id/EventAddingFragment"
-        android:name="com.eriksargsyan.eventplanner.screens.eventAdding.EventAddingFragment"
+        android:id="@+id/EventAddAndEditFragment"
+        android:name="com.eriksargsyan.eventplanner.screens.eventAddAndEdit.EventAddAndEditFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_event_adding">
+        tools:layout="@layout/fragment_event_add_and_edit">
 
         <action
-            android:id="@+id/action_EventAddingFragment_to_EventListFragment"
+            android:id="@+id/action_EventAddAndEditFragment_to_EventListFragment"
             app:destination="@id/EventListFragment" />
     </fragment>
+
 </navigation>

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="Base.Theme.EventPlanner" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/md_theme_light_primary</item>
@@ -42,6 +42,5 @@
         <item name="android:textStyle">italic</item>
         <item name="android:textSize">15sp</item>
     </style>
-
 
 </resources>

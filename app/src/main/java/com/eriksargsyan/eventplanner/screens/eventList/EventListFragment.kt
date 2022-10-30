@@ -18,7 +18,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
 
             eventAdderFAB.setOnClickListener{
                 findNavController().navigate(
-                    EventListFragmentDirections.actionEventListFragmentToEventAddingFragment()
+                    EventListFragmentDirections.actionEventListFragmentToEventAddAndEditFragment()
                 )
             }
 

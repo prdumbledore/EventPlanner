@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            tools:listitem="@layout/item_layout_user" />
+            tools:listitem="@layout/item_layout_event" />
 
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -36,7 +36,6 @@
         android:contentDescription="@string/event_adder_str"
         android:text="@string/event_adder_str"
         app:icon="@android:drawable/ic_input_add"
-        app:showMotionSpec="@anim/nav_default_pop_enter_anim"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
