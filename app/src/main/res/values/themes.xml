@@ -31,11 +31,12 @@
 
     <style name="Theme.EventPlanner.TextView.Header" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="android:textSize">21sp</item>
+        <item name="android:textStyle">bold</item>
 
     </style>
 
     <style name="Theme.EventPlanner.TextView.Body" parent="TextAppearance.Material3.BodyMedium">
-        <item name="android:textSize">17sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Theme.EventPlanner.TextView.Extra" parent="TextAppearance.Material3.LabelSmall">

@@ -1,6 +1,7 @@
 package com.eriksargsyan.eventplanner.screens.eventList
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.eriksargsyan.eventplanner.R
@@ -8,7 +9,9 @@ import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.databinding.ItemLayoutEventBinding
 import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
 
-class EventListAdapter: RecyclerView.Adapter<EventListAdapter.EventViewHolder>() {
+class EventListAdapter(
+    private val onCardClickListener: (Event, View) -> Unit
+): RecyclerView.Adapter<EventListAdapter.EventViewHolder>() {
 
     private val list: MutableList<Event> = mutableListOf()
 
@@ -30,6 +33,9 @@ class EventListAdapter: RecyclerView.Adapter<EventListAdapter.EventViewHolder>()
                 weatherTemp.text = "9 C"
                 eventDate.text = dateToDMY(listItem.date)
 
+                cardEvent.setOnClickListener {
+                    onCardClickListener.invoke(listItem, cardEvent)
+                }
             }
 
         }

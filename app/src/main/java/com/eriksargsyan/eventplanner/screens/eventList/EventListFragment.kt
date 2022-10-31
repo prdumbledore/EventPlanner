@@ -2,15 +2,28 @@ package com.eriksargsyan.eventplanner.screens.eventList
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat.apply
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.appComponent
+import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.databinding.FragmentEventListBinding
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
+import com.google.android.material.transition.MaterialElevationScale
 import javax.inject.Inject
 
 
@@ -19,23 +32,33 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
 }) {
 
     @Inject
-    lateinit var viewModelFactory: EventListFragmentViewModel.EventListFragmentViewModelFactory.Factory
+    lateinit var viewModelFactory: EventListViewModel.EventListViewModelFactory.Factory
 
-    private val eventListViewModel: EventListFragmentViewModel by viewModels {
+    private val eventListViewModel: EventListViewModel by viewModels {
         viewModelFactory.create()
     }
 
-    private val eventAdapter: EventListAdapter by lazy { EventListAdapter() }
+    private val eventAdapter: EventListAdapter by lazy { EventListAdapter{ event, view ->
+            onCardClicked(view, event)
+    } }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         context.appComponent.inject(this)
 
+
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
+
+
+
+            postponeEnterTransition()
+            view.doOnPreDraw { startPostponedEnterTransition() }
 
             recyclerEventList.apply {
                 setHasFixedSize(true)
@@ -44,9 +67,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
             }
 
             eventAdderFAB.setOnClickListener{
-                findNavController().navigate(
-                    EventListFragmentDirections.actionEventListFragmentToEventAddAndEditFragment()
-                )
+                onFabClicked()
             }
 
             recyclerEventList.addOnScrollListener(object: RecyclerView.OnScrollListener() {
@@ -84,4 +105,37 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
 
 
     }
+
+    private fun onCardClicked(cardView: View, event: Event) {
+        exitTransition = MaterialElevationScale(false).apply {
+            duration = resources.getInteger(
+                com.google.android.material.R.integer.material_motion_duration_medium_1
+            ).toLong()
+        }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = resources.getInteger(
+                com.google.android.material.R.integer.material_motion_duration_medium_1
+            ).toLong()
+        }
+        val eventCardDetailTransitionName = getString(
+            R.string.card_event_transition_name
+        )
+        val extras = FragmentNavigatorExtras(
+            cardView to eventCardDetailTransitionName
+        )
+        val directions = EventListFragmentDirections.actionEventListFragmentToEventViewingFragment(
+            eventId = event.id, eventName = event.eventName
+        )
+            findNavController().navigate(directions, extras)
+    }
+
+    private fun onFabClicked() {
+        exitTransition = null
+        reenterTransition = null
+        findNavController().navigate(
+            EventListFragmentDirections.actionEventListFragmentToEventAddAndEditFragment()
+        )
+    }
+
+
 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class EventListFragmentViewModel(
+class EventListViewModel(
     private val eventRepository: EventRepository
 ) : ViewModel() {
 
@@ -29,18 +29,18 @@ class EventListFragmentViewModel(
 
     }
 
-    class EventListFragmentViewModelFactory @AssistedInject constructor(
+    class EventListViewModelFactory @AssistedInject constructor(
         private val eventRepository: EventRepository
     ) : ViewModelProvider.Factory {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>) =
-            EventListFragmentViewModel(eventRepository) as T
+            EventListViewModel(eventRepository) as T
 
         @AssistedFactory
         interface Factory {
 
-            fun create(): EventListFragmentViewModelFactory
+            fun create(): EventListViewModelFactory
         }
     }
 }

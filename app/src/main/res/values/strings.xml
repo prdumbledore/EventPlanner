@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Event Planner</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
     <string name="event_adder_str">Add New Event</string>
     <string name="event_create_str">Event Create</string>
     <string name="event_edit_str">Event Edit</string>
@@ -18,6 +17,11 @@
     <string name="event_city_name">Choose City</string>
     <string name="event_address_line">Address Line</string>
     <string name="content_description_search_icon">Search Icon</string>
+    <string name="event_description_header">Description</string>
+    <string name="delete">Delete Event</string>
+    <string name="delete_description">Delete button</string>
+    <string name="edit">Edit Event</string>
+    <string name="edit_description">Edit button</string>
 
 
 </resources>

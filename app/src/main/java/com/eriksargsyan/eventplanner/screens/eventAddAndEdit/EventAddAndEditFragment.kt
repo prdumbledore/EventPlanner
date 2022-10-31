@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.database.Cursor
 import android.database.MatrixCursor
+import android.graphics.Color
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.provider.BaseColumns
@@ -32,6 +33,8 @@ import com.eriksargsyan.eventplanner.util.Constants.ARG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.DIALOG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.FIELD_IS_EMPTY
 import com.eriksargsyan.eventplanner.util.Constants.REQUEST_KEY
+import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
+import com.google.android.material.transition.MaterialContainerTransform
 import java.util.*
 import javax.inject.Inject
 
@@ -42,7 +45,6 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
 
     private var eventId: Int = 0
     private lateinit var eventDate: Date
-
 
 
     @Inject
@@ -74,6 +76,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
         }
     }
 
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         context.appComponent.inject(this)
@@ -96,7 +99,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                 )
                 setFragmentResultListener(REQUEST_KEY) { _, bundle ->
                     eventDate = bundle.get(ARG_DATE) as Date
-                    dateButton.text = eventDate.toString()
+                    dateButton.text = dateToDMY(eventDate)
                 }
             }
 
@@ -106,6 +109,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                 eventAddingViewModel.state.collect { searchState ->
                     when (searchState) {
                         is SearchListState.Loading -> {
+                            //TODO
                         }
                         is SearchListState.Searching -> {
                             searchUpdate(searchState.cityList.map { "${it.name}, ${it.country}" })
@@ -116,7 +120,9 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                                 EventAddAndEditFragmentDirections.actionEventAddAndEditFragmentToEventListFragment()
                             )
                         }
-                        is SearchListState.Error -> {}
+                        is SearchListState.Error -> {
+                            //TODO
+                        }
                     }
                 }
 

@@ -18,6 +18,7 @@ interface EventRepository {
     suspend fun getGeolocation(cityName: String): List<CityName>
     suspend fun saveEvent(event: Event)
     suspend fun getAllEvents(): List<Event>
+    suspend fun getEvent(id: Int): Event
     suspend fun hasNetworkAccess(): Boolean
 }
 
@@ -42,6 +43,10 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun getAllEvents(): List<Event> {
         return databaseMapper.entityToDomainMapList(eventDao.getEvents())
+    }
+
+    override suspend fun getEvent(id: Int): Event {
+        return databaseMapper.entityToDomainMap(eventDao.getEventById(id))
     }
 
 

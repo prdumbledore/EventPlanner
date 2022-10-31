@@ -19,6 +19,7 @@
             android:id="@+id/recyclerEventList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:transitionName="@string/card_event_transition_name"
             android:padding="16dp"
             tools:listitem="@layout/item_layout_event" />
 
@@ -35,6 +36,7 @@
         android:layout_gravity="bottom|end"
         android:contentDescription="@string/event_adder_str"
         android:text="@string/event_adder_str"
+        android:transitionName="@string/card_event_transition_name"
         app:icon="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
