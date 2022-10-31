@@ -3,6 +3,7 @@ package com.eriksargsyan.eventplanner.screens.eventList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.data.model.domain.Event
@@ -32,10 +33,15 @@ class EventListAdapter(
                 weatherIcon.setImageResource(R.drawable.weather_icon)
                 weatherTemp.text = "9 C"
                 eventDate.text = dateToDMY(listItem.date)
-
                 cardEvent.setOnClickListener {
                     onCardClickListener.invoke(listItem, cardEvent)
                 }
+
+                chipGroup.setOnCheckedStateChangeListener { chip, isChecked ->
+                    val checked = isChecked.filter { chip.checkedChipId == it }
+
+                }
+
             }
 
         }

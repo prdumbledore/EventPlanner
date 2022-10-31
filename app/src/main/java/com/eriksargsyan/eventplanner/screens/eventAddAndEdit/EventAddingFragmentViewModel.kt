@@ -1,6 +1,5 @@
 package com.eriksargsyan.eventplanner.screens.eventAddAndEdit
 
-import android.icu.util.Calendar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -8,7 +7,7 @@ import com.eriksargsyan.eventplanner.data.EventRepository
 import com.eriksargsyan.eventplanner.data.model.domain.CityName
 import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.util.ErrorConstants.NO_NETWORK_CONNECTION
-import com.eriksargsyan.eventplanner.util.ErrorConstants.OTHER_ERROR
+import com.eriksargsyan.eventplanner.util.ErrorConstants.STATE_EXCEPTION
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +31,7 @@ class EventAddingFragmentViewModel(
                     if (cityName.isEmpty()) SearchListState.Searching(emptyList())
                     else SearchListState.Searching(eventRepository.getGeolocation(cityName = cityName))
                 } catch (e: IllegalStateException) {
-                    SearchListState.Error(OTHER_ERROR)
+                    SearchListState.Error(STATE_EXCEPTION)
                 }
             } else {
                 SearchListState.Error(NO_NETWORK_CONNECTION)
@@ -50,18 +49,35 @@ class EventAddingFragmentViewModel(
         eventDescription: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            eventRepository.saveEvent(Event(
-                id = eventId,
-                eventName = eventName,
-                date = eventDate,
-                cityName = cityName.name,
-                latitude = cityName.latitude,
-                longitude = cityName.longitude,
-                addressLine = addressLine,
-                description = eventDescription,
-            ))
+            eventRepository.saveEvent(
+                Event(
+                    id = eventId,
+                    eventName = eventName,
+                    date = eventDate,
+                    cityName = cityName.name,
+                    latitude = cityName.latitude,
+                    longitude = cityName.longitude,
+                    addressLine = addressLine,
+                    description = eventDescription,
+                    country = cityName.country,
+                )
+            )
 
-            _state.value = SearchListState.Result
+            _state.value = try {
+                SearchListState.Result
+            } catch (e: IllegalStateException) {
+                SearchListState.Error(STATE_EXCEPTION)
+            }
+        }
+    }
+
+    fun fetchField(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.value = try {
+                SearchListState.Editing(eventRepository.getEvent(id))
+            } catch (e: IllegalStateException) {
+                SearchListState.Error(STATE_EXCEPTION)
+            }
         }
     }
 

@@ -22,6 +22,13 @@
     <string name="delete_description">Delete button</string>
     <string name="edit">Edit Event</string>
     <string name="edit_description">Edit button</string>
+    <string name="passed">PASSED</string>
+    <string name="coming_chip">Coming</string>
+    <string name="visited_chip">Visited</string>
+    <string name="missed_chip">Missed</string>
+    <string name="missed_label">Missed</string>
+    <string name="visited_label">Visited</string>
+    <string name="coming_label">Coming</string>
 
 
 </resources>

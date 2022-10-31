@@ -13,17 +13,19 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.appComponent
 import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.databinding.FragmentEventViewingBinding
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
+import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
 import com.google.android.material.transition.MaterialContainerTransform
 import javax.inject.Inject
 
-class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({
-    inflate, container -> FragmentEventViewingBinding.inflate(inflate, container, false)
+class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate, container ->
+    FragmentEventViewingBinding.inflate(inflate, container, false)
 }) {
 
     @Inject
@@ -36,19 +38,16 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({
     private val args: EventViewingFragmentArgs by navArgs()
     private var eventId: Int = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.nav_graph
             scrimColor = Color.TRANSPARENT
             setAllContainerColors(com.google.android.material.R.attr.colorOnSurface)
         }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        context.appComponent.inject(this)
         eventId = args.eventId
+        context.appComponent.inject(this)
         (activity as AppCompatActivity).supportActionBar?.title = args.eventName
     }
 
@@ -64,13 +63,22 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({
                 eventViewingViewModel.state.collect { eventState ->
                     when (eventState) {
                         is EventViewingState.Loading -> {
+                            loadingField.progressBar.visibility = View.VISIBLE
                             eventViewingViewModel.fetchEventDetails(eventId)
                         }
                         is EventViewingState.Success -> {
+                            loadingField.progressBar.visibility = View.GONE
                             fillField(eventState.event)
-
                         }
-                        is EventViewingState.Error -> {}
+                        is EventViewingState.Delete -> {
+                            findNavController().navigate(
+                                EventViewingFragmentDirections
+                                    .actionEventViewingFragmentToEventListFragment()
+                            )
+                        }
+                        is EventViewingState.Error -> {
+                            eventViewingViewModel.setLoadingState()
+                        }
                     }
                 }
 
@@ -81,6 +89,12 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({
 
     private fun fillField(event: Event) {
         binding.apply {
+            eventDate.text = dateToDMY(event.date)
+            weatherIcon.setImageResource(R.drawable.weather_icon)
+            weatherTemp.text = getString(R.string.weather_temp)
+            eventPlace.text = if (event.addressLine.isEmpty()) event.cityName
+            else " ${event.cityName}, ${event.addressLine}"
+            eventDescription.text = event.description
 
         }
     }
@@ -96,10 +110,16 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.delete -> {
+                        eventViewingViewModel.deleteEvent(eventId)
                         true
                     }
                     R.id.edit -> {
-                        eventViewingViewModel
+                        findNavController().navigate(
+                            EventViewingFragmentDirections
+                                .actionEventViewingFragmentToEventAddAndEditFragment(
+                                    eventId = eventId
+                                )
+                        )
                         true
                     }
                     else -> false

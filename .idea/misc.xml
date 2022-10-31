@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_alarm_black_24dp.xml" value="0.2395" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_close_black_24dp.xml" value="0.2555" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_delete_black_24dp.xml" value="0.143" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_done_black_24dp.xml" value="0.2555" />
@@ -13,12 +14,13 @@
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/content_main.xml" value="0.14722222222222223" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_event_add_and_edit.xml" value="0.22" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_event_adding.xml" value="0.33" />
-        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_event_list.xml" value="0.1" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_event_list.xml" value="0.22" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_event_viewing.xml" value="0.2975630611372381" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_first.xml" value="0.25" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/fragment_second.xml" value="0.2105978260869565" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/item_layout_event.xml" value="0.2975630611372381" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/item_layout_user.xml" value="0.33" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/item_progress_bar.xml" value="0.2967079948696024" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/item_search_recycler.xml" value="0.22" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/search_template.xml" value="0.25" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/searchable.xml" value="0.2967079948696024" />

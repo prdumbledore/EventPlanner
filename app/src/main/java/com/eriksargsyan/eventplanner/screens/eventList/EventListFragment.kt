@@ -2,17 +2,10 @@ package com.eriksargsyan.eventplanner.screens.eventList
 
 import android.content.Context
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat.apply
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -42,20 +35,14 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
             onCardClicked(view, event)
     } }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         context.appComponent.inject(this)
-
-
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-
-
 
             postponeEnterTransition()
             view.doOnPreDraw { startPostponedEnterTransition() }
@@ -90,12 +77,16 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
                 eventListViewModel.state.collect { eventState ->
                     when (eventState) {
                         is EventListState.Loading -> {
+                            loadingField.progressBar.visibility = View.VISIBLE
                             eventListViewModel.fetchEvents()
                         }
                         is EventListState.Success -> {
+                            loadingField.progressBar.visibility = View.GONE
                             eventAdapter.submitList(eventState.eventList)
                         }
-                        is EventListState.Error -> {}
+                        is EventListState.Error -> {
+                            eventListViewModel.setLoadingState()
+                        }
                     }
                 }
 
@@ -133,9 +124,10 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         exitTransition = null
         reenterTransition = null
         findNavController().navigate(
-            EventListFragmentDirections.actionEventListFragmentToEventAddAndEditFragment()
+            EventListFragmentDirections.actionEventListFragmentToEventAddAndEditFragment(
+                eventId = 0
+            )
         )
     }
-
 
 }

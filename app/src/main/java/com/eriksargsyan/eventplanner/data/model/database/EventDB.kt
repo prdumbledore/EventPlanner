@@ -34,6 +34,8 @@ data class EventDB(
     @ColumnInfo(name = "event_description")
     val description: String,
 
+    @ColumnInfo(name = "event_country")
+    val country: String,
 
     )
 

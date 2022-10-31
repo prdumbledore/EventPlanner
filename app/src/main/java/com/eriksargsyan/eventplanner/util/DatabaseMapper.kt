@@ -15,6 +15,7 @@ class DatabaseMapper : EntityToDomainMapper<EventDB, Event> {
         longitude = entity.longitude,
         addressLine = entity.addressLine,
         description = entity.description,
+        country = entity.country,
     )
 
     override fun domainToEntityMap(domain: Event) = EventDB (
@@ -26,6 +27,7 @@ class DatabaseMapper : EntityToDomainMapper<EventDB, Event> {
         longitude = domain.longitude,
         addressLine = domain.addressLine,
         description = domain.description,
+        country = domain.country
     )
 
     override fun entityToDomainMapList(entityList: List<EventDB>) =

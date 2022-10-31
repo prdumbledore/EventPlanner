@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eriksargsyan.eventplanner.data.EventRepository
-import com.eriksargsyan.eventplanner.util.ErrorConstants.OTHER_ERROR
+import com.eriksargsyan.eventplanner.screens.eventList.EventListState
+import com.eriksargsyan.eventplanner.util.ErrorConstants.STATE_EXCEPTION
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -25,9 +27,25 @@ class EventViewingViewModel(
             _state.value = try {
                EventViewingState.Success(eventRepository.getEvent(id))
             } catch (e: IllegalStateException) {
-                EventViewingState.Error(OTHER_ERROR)
+                EventViewingState.Error(STATE_EXCEPTION)
             }
         }
+    }
+
+    fun deleteEvent(id: Int) {
+        viewModelScope.launch {
+            _state.value = try {
+                eventRepository.deleteEvent(id)
+                EventViewingState.Delete
+            } catch (e: IllegalStateException) {
+                EventViewingState.Error(STATE_EXCEPTION)
+            }
+        }
+
+    }
+
+    fun setLoadingState() {
+        _state.value = EventViewingState.Loading
     }
 
     class EventViewingViewModelFactory @AssistedInject constructor(

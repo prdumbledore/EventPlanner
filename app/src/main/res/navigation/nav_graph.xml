@@ -27,6 +27,10 @@
         <action
             android:id="@+id/action_EventAddAndEditFragment_to_EventListFragment"
             app:destination="@id/EventListFragment" />
+        <argument
+            android:name="eventId"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/EventViewingFragment"
@@ -35,7 +39,7 @@
         tools:layout="@layout/fragment_event_viewing">
 
         <action
-            android:id="@+id/action_EventAddAndEditFragment_to_EventListFragment"
+            android:id="@+id/action_EventViewingFragment_to_EventListFragment"
             app:destination="@id/EventListFragment" />
         <action
             android:id="@+id/action_EventViewingFragment_to_EventAddAndEditFragment"

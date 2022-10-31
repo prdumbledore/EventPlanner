@@ -11,14 +11,14 @@ class NetworkCityNameMapper : EntityToDomainMapper<CityNameNet, CityName> {
         name = entity.name,
         latitude = entity.latitude,
         longitude = entity.longitude,
-        country = Locale("", entity.country).displayCountry
+        country = Locale("en", entity.country).displayCountry
     )
 
     override fun domainToEntityMap(domain: CityName) = CityNameNet(
         name = domain.name,
         latitude = domain.latitude,
         longitude = domain.longitude,
-        country = Locale("", domain.country).country
+        country = Locale("en", domain.country).country
     )
 
     override fun entityToDomainMapList(entityList: List<CityNameNet>) =

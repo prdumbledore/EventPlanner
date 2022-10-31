@@ -6,14 +6,47 @@
     android:layout_height="match_parent"
     tools:context=".screens.eventList.EventListFragment">
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        style="@style/Widget.Material3.TabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabGravity="fill"
+        app:tabIndicatorAnimationMode="elastic"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/baseline_alarm_black_24dp"
+            android:text="@string/coming_label" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/baseline_done_black_24dp"
+            android:text="@string/visited_label" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/baseline_close_black_24dp"
+            android:text="@string/missed_label" />
+
+
+    </com.google.android.material.tabs.TabLayout>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/tab_layout">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerEventList"
@@ -40,4 +73,8 @@
         app:icon="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <include
+        android:id="@+id/loading_field"
+        layout="@layout/item_progress_bar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

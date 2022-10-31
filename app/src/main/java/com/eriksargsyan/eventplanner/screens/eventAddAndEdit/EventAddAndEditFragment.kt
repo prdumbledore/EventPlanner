@@ -4,8 +4,6 @@ import android.app.SearchManager
 import android.content.Context
 import android.database.Cursor
 import android.database.MatrixCursor
-import android.graphics.Color
-import android.icu.util.Calendar
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.view.Menu
@@ -23,18 +21,20 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.appComponent
 import com.eriksargsyan.eventplanner.data.model.domain.CityName
+import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.databinding.FragmentEventAddAndEditBinding
 import com.eriksargsyan.eventplanner.hideKeyboard
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
+import com.eriksargsyan.eventplanner.screens.eventViewing.EventViewingFragmentArgs
 import com.eriksargsyan.eventplanner.util.Constants.ARG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.DIALOG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.FIELD_IS_EMPTY
 import com.eriksargsyan.eventplanner.util.Constants.REQUEST_KEY
 import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
-import com.google.android.material.transition.MaterialContainerTransform
 import java.util.*
 import javax.inject.Inject
 
@@ -43,17 +43,19 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
     { inflater, container -> FragmentEventAddAndEditBinding.inflate(inflater, container, false) }
 ) {
 
-    private var eventId: Int = 0
-    private lateinit var eventDate: Date
 
+    private lateinit var eventDate: Date
+    private lateinit var cityName: CityName
+
+    private val args: EventViewingFragmentArgs by navArgs()
+    private var eventId: Int = 0
 
     @Inject
     lateinit var viewModelFactory: EventAddingFragmentViewModel.EventAddingFragmentViewModelFactory.Factory
 
     private var searchResult: List<CityName> = emptyList()
-    private var searchItemPosition: Int = 0
 
-    private val eventAddingViewModel: EventAddingFragmentViewModel by viewModels {
+    private val eventAddAndEditViewModel: EventAddingFragmentViewModel by viewModels {
         viewModelFactory.create()
     }
 
@@ -76,11 +78,18 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        eventId = args.eventId
+        (activity as AppCompatActivity).supportActionBar?.title =
+            if (eventId == 0) getString(R.string.event_create_str)
+            else getString(R.string.event_edit_str)
+    }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         context.appComponent.inject(this)
-
     }
 
 
@@ -106,14 +115,18 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
 
-                eventAddingViewModel.state.collect { searchState ->
+                eventAddAndEditViewModel.state.collect { searchState ->
                     when (searchState) {
                         is SearchListState.Loading -> {
-                            //TODO
+                            if (eventId > 0) eventAddAndEditViewModel.fetchField(eventId)
                         }
                         is SearchListState.Searching -> {
                             searchUpdate(searchState.cityList.map { "${it.name}, ${it.country}" })
                             searchResult = searchState.cityList
+
+                        }
+                        is SearchListState.Editing -> {
+                            fillField(searchState.event)
                         }
                         is SearchListState.Result -> {
                             findNavController().navigate(
@@ -131,6 +144,18 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
         }
 
 
+    }
+
+    private fun fillField(event: Event) {
+        with(binding) {
+            eventNameEditText.setText(event.eventName)
+            eventDate = event.date
+            dateButton.text = dateToDMY(eventDate)
+            cityName = CityName(event.cityName, event.latitude, event.longitude, event.country)
+            eventCityName.setQuery("${event.cityName}, ${event.country}", true)
+            eventAddressLine.editText!!.setText(event.addressLine)
+            eventDescriptionLayout.editText!!.setText(event.description)
+        }
     }
 
     private fun menuLoading() {
@@ -171,11 +196,11 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
             else null
 
             if (eventNameLayout.error == null && dateButtonLayout.error == null && eventCityNameLayout.error == null)
-                eventAddingViewModel.saveResult(
+                eventAddAndEditViewModel.saveResult(
                     eventId,
                     eventNameEditText.text.toString(),
                     eventDate,
-                    searchResult[searchItemPosition],
+                    cityName,
                     eventAddressLine.editText?.text.toString(),
                     eventDescriptionLayout.editText?.text.toString()
                 )
@@ -193,7 +218,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                 }
 
                 override fun onQueryTextChange(query: String?): Boolean {
-                    eventAddingViewModel.fetchEventGeo(cityName = query ?: "")
+                    eventAddAndEditViewModel.fetchEventGeo(cityName = query ?: "")
                     return true
                 }
             })
@@ -212,7 +237,8 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                         )
                     eventCityName.setQuery(selection, false)
 
-                    searchItemPosition = position
+
+                    cityName = searchResult[position]
 
                     return true
                 }

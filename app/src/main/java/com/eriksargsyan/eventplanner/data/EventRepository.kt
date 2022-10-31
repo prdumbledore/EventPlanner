@@ -4,6 +4,7 @@ package com.eriksargsyan.eventplanner.data
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import com.eriksargsyan.eventplanner.data.database.EventDao
 import com.eriksargsyan.eventplanner.data.model.domain.CityName
 import com.eriksargsyan.eventplanner.data.model.domain.Event
@@ -19,6 +20,7 @@ interface EventRepository {
     suspend fun saveEvent(event: Event)
     suspend fun getAllEvents(): List<Event>
     suspend fun getEvent(id: Int): Event
+    suspend fun deleteEvent(id: Int)
     suspend fun hasNetworkAccess(): Boolean
 }
 
@@ -47,6 +49,10 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun getEvent(id: Int): Event {
         return databaseMapper.entityToDomainMap(eventDao.getEventById(id))
+    }
+
+    override suspend fun deleteEvent(id: Int) {
+        eventDao.deleteEventById(id)
     }
 
 
