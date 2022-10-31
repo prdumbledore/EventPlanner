@@ -17,6 +17,11 @@ interface EventDao {
     @Update
     suspend fun updateEvent(eventDB: EventDB)
 
+    @Query("SELECT * FROM $TABLE_NAME")
+    suspend fun getEvents(): List<EventDB>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE $ID = :id")
     suspend fun getEventById(id: Int): EventDB
+
+
 }

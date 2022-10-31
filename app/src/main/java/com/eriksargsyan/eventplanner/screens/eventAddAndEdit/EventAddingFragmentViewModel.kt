@@ -1,6 +1,6 @@
 package com.eriksargsyan.eventplanner.screens.eventAddAndEdit
 
-import android.util.Log
+import android.icu.util.Calendar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,11 +12,9 @@ import com.eriksargsyan.eventplanner.util.ErrorConstants.OTHER_ERROR
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
 import java.util.*
 
 class EventAddingFragmentViewModel(

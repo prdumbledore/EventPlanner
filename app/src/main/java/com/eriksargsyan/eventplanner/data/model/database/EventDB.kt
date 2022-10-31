@@ -10,7 +10,7 @@ import java.util.*
 @Entity(tableName = TABLE_NAME)
 data class EventDB(
 
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
 
     @ColumnInfo(name = "event_name")

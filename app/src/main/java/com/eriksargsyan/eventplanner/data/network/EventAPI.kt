@@ -1,4 +1,4 @@
-package com.eriksargsyan.eventplanner.data
+package com.eriksargsyan.eventplanner.data.network
 
 import com.eriksargsyan.eventplanner.data.model.network.CityNameNet
 import retrofit2.http.GET

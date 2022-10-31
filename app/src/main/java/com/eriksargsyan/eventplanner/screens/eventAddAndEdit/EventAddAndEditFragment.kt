@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.database.Cursor
 import android.database.MatrixCursor
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.view.Menu
@@ -41,7 +42,6 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
 
     private var eventId: Int = 0
     private lateinit var eventDate: Date
-    private lateinit var cityName: CityName
 
 
 

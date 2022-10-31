@@ -4,10 +4,10 @@ package com.eriksargsyan.eventplanner.data
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
 import com.eriksargsyan.eventplanner.data.database.EventDao
 import com.eriksargsyan.eventplanner.data.model.domain.CityName
 import com.eriksargsyan.eventplanner.data.model.domain.Event
+import com.eriksargsyan.eventplanner.data.network.EventAPI
 import com.eriksargsyan.eventplanner.util.Constants.API_KEY
 import com.eriksargsyan.eventplanner.util.DatabaseMapper
 import com.eriksargsyan.eventplanner.util.NetworkCityNameMapper
@@ -17,6 +17,7 @@ import javax.inject.Inject
 interface EventRepository {
     suspend fun getGeolocation(cityName: String): List<CityName>
     suspend fun saveEvent(event: Event)
+    suspend fun getAllEvents(): List<Event>
     suspend fun hasNetworkAccess(): Boolean
 }
 
@@ -37,6 +38,10 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun saveEvent(event: Event) {
         val eventDB = databaseMapper.domainToEntityMap(event)
         eventDao.insertEvent(eventDB)
+    }
+
+    override suspend fun getAllEvents(): List<Event> {
+        return databaseMapper.entityToDomainMapList(eventDao.getEvents())
     }
 
 

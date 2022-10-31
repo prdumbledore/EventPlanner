@@ -1,6 +1,6 @@
 package com.eriksargsyan.eventplanner.di
 
-import com.eriksargsyan.eventplanner.data.EventAPI
+import com.eriksargsyan.eventplanner.data.network.EventAPI
 import com.eriksargsyan.eventplanner.util.Constants.BASE_URL
 import com.eriksargsyan.eventplanner.util.NetworkCityNameMapper
 import com.google.gson.Gson
