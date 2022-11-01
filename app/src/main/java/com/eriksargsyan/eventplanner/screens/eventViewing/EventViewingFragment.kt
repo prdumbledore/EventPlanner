@@ -73,7 +73,7 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
                         is EventViewingState.Delete -> {
                             findNavController().navigate(
                                 EventViewingFragmentDirections
-                                    .actionEventViewingFragmentToEventListFragment()
+                                    .actionEventViewingFragmentToEventListTabFragment()
                             )
                         }
                         is EventViewingState.Error -> {

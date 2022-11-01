@@ -5,6 +5,7 @@ import androidx.room.Room
 import android.content.Context
 import com.eriksargsyan.eventplanner.data.database.EventDao
 import com.eriksargsyan.eventplanner.data.database.EventDatabase
+import com.eriksargsyan.eventplanner.util.Constants.DATABASE_NAME
 import com.eriksargsyan.eventplanner.util.DatabaseMapper
 import dagger.Module
 import dagger.Provides
@@ -19,7 +20,7 @@ object RoomModule {
         return Room.databaseBuilder(
             context,
             EventDatabase::class.java,
-            EventDatabase.DATABASE_NAME
+            DATABASE_NAME
         )
             .fallbackToDestructiveMigration()
             .build()

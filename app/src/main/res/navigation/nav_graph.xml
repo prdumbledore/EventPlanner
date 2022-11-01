@@ -3,7 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/EventListFragment">
+    app:startDestination="@id/EventListTabFragment">
+
+    <fragment
+        android:id="@+id/EventListTabFragment"
+        android:name="com.eriksargsyan.eventplanner.screens.eventList.eventListTab.EventListTabFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_event_list_tab">
+
+        <action
+            android:id="@+id/action_EventListTabFragment_to_EventListFragment"
+            app:destination="@id/EventListFragment" />
+        <action
+            android:id="@+id/action_EventListTabFragment_to_EventAddAndEditFragment"
+            app:destination="@id/EventAddAndEditFragment" />
+        <action
+            android:id="@+id/action_EventListTabFragment_to_EventViewingFragment"
+            app:destination="@id/EventViewingFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/EventListFragment"
@@ -11,12 +29,6 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_event_list">
 
-        <action
-            android:id="@+id/action_EventListFragment_to_EventAddAndEditFragment"
-            app:destination="@id/EventAddAndEditFragment" />
-        <action
-            android:id="@+id/action_EventListFragment_to_EventViewingFragment"
-            app:destination="@id/EventViewingFragment" />
     </fragment>
     <fragment
         android:id="@+id/EventAddAndEditFragment"
@@ -25,8 +37,8 @@
         tools:layout="@layout/fragment_event_add_and_edit">
 
         <action
-            android:id="@+id/action_EventAddAndEditFragment_to_EventListFragment"
-            app:destination="@id/EventListFragment" />
+            android:id="@+id/action_EventAddAndEditFragment_to_EventListTabFragment"
+            app:destination="@id/EventListTabFragment" />
         <argument
             android:name="eventId"
             android:defaultValue="0"
@@ -39,8 +51,8 @@
         tools:layout="@layout/fragment_event_viewing">
 
         <action
-            android:id="@+id/action_EventViewingFragment_to_EventListFragment"
-            app:destination="@id/EventListFragment" />
+            android:id="@+id/action_EventViewingFragment_to_EventListTabFragment"
+            app:destination="@id/EventListTabFragment" />
         <action
             android:id="@+id/action_EventViewingFragment_to_EventAddAndEditFragment"
             app:destination="@id/EventAddAndEditFragment" />

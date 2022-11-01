@@ -3,7 +3,9 @@ package com.eriksargsyan.eventplanner.screens.eventList
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,11 +13,16 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.appComponent
 import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.databinding.FragmentEventListBinding
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
+import com.eriksargsyan.eventplanner.screens.eventList.eventListTab.EventListTabFragmentDirections
+import com.eriksargsyan.eventplanner.util.Constants.ARG_OBJECT
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialElevationScale
 import javax.inject.Inject
 
@@ -35,6 +42,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
             onCardClicked(view, event)
     } }
 
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         context.appComponent.inject(this)
@@ -42,6 +50,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.apply {
 
             postponeEnterTransition()
@@ -114,7 +123,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         val extras = FragmentNavigatorExtras(
             cardView to eventCardDetailTransitionName
         )
-        val directions = EventListFragmentDirections.actionEventListFragmentToEventViewingFragment(
+        val directions = EventListTabFragmentDirections.actionEventListTabFragmentToEventViewingFragment(
             eventId = event.id, eventName = event.eventName
         )
             findNavController().navigate(directions, extras)
@@ -124,7 +133,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         exitTransition = null
         reenterTransition = null
         findNavController().navigate(
-            EventListFragmentDirections.actionEventListFragmentToEventAddAndEditFragment(
+            EventListTabFragmentDirections.actionEventListTabFragmentToEventAddAndEditFragment(
                 eventId = 0
             )
         )

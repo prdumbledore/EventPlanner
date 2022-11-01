@@ -12,7 +12,4 @@ abstract class EventDatabase: RoomDatabase() {
 
     abstract fun EventDao(): EventDao
 
-    companion object {
-        const val DATABASE_NAME = "event_db"
-    }
 }

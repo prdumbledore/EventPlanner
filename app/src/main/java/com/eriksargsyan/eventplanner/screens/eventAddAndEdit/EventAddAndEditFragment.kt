@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.widget.doAfterTextChanged
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.setFragmentResultListener
@@ -32,8 +33,8 @@ import com.eriksargsyan.eventplanner.screens.base.BaseFragment
 import com.eriksargsyan.eventplanner.screens.eventViewing.EventViewingFragmentArgs
 import com.eriksargsyan.eventplanner.util.Constants.ARG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.DIALOG_DATE
-import com.eriksargsyan.eventplanner.util.Constants.FIELD_IS_EMPTY
 import com.eriksargsyan.eventplanner.util.Constants.REQUEST_KEY
+import com.eriksargsyan.eventplanner.util.ErrorConstants.FIELD_IS_EMPTY
 import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
 import java.util.*
 import javax.inject.Inject
@@ -45,7 +46,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
 
 
     private lateinit var eventDate: Date
-    private lateinit var cityName: CityName
+    private var cityName: CityName? = null
 
     private val args: EventViewingFragmentArgs by navArgs()
     private var eventId: Int = 0
@@ -93,6 +94,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
     }
 
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -101,6 +103,9 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
 
         with(binding) {
 
+            eventNameEditText.doAfterTextChanged {
+                eventNameLayout.error = null
+            }
             dateButton.setOnClickListener {
                 DatePickerFragment().show(
                     this@EventAddAndEditFragment.parentFragmentManager,
@@ -109,6 +114,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                 setFragmentResultListener(REQUEST_KEY) { _, bundle ->
                     eventDate = bundle.get(ARG_DATE) as Date
                     dateButton.text = dateToDMY(eventDate)
+                    dateButtonLayout.error = null
                 }
             }
 
@@ -130,7 +136,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                         }
                         is SearchListState.Result -> {
                             findNavController().navigate(
-                                EventAddAndEditFragmentDirections.actionEventAddAndEditFragmentToEventListFragment()
+                                EventAddAndEditFragmentDirections.actionEventAddAndEditFragmentToEventListTabFragment()
                             )
                         }
                         is SearchListState.Error -> {
@@ -152,7 +158,8 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
             eventDate = event.date
             dateButton.text = dateToDMY(eventDate)
             cityName = CityName(event.cityName, event.latitude, event.longitude, event.country)
-            eventCityName.setQuery("${event.cityName}, ${event.country}", true)
+            eventCityName.setQuery("${event.cityName}, ${event.country}", false)
+            eventCityName.clearFocus()
             eventAddressLine.editText!!.setText(event.addressLine)
             eventDescriptionLayout.editText!!.setText(event.description)
         }
@@ -192,7 +199,8 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                 if (dateButton.text.toString() == resources.getString(R.string.pick_date))
                     FIELD_IS_EMPTY
                 else null
-            eventCityNameLayout.error = if (searchResult.isEmpty()) FIELD_IS_EMPTY
+            eventCityNameLayout.error = if (searchResult.isEmpty() || cityName == null)
+                FIELD_IS_EMPTY
             else null
 
             if (eventNameLayout.error == null && dateButtonLayout.error == null && eventCityNameLayout.error == null)
@@ -200,7 +208,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                     eventId,
                     eventNameEditText.text.toString(),
                     eventDate,
-                    cityName,
+                    cityName!!,
                     eventAddressLine.editText?.text.toString(),
                     eventDescriptionLayout.editText?.text.toString()
                 )
@@ -236,7 +244,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                             cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1) ?: 0
                         )
                     eventCityName.setQuery(selection, false)
-
+                    eventCityNameLayout.error = null
 
                     cityName = searchResult[position]
 
