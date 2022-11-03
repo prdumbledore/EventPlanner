@@ -2,10 +2,7 @@ package com.eriksargsyan.eventplanner.screens.eventList
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -21,8 +18,6 @@ import com.eriksargsyan.eventplanner.databinding.FragmentEventListBinding
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
 import com.eriksargsyan.eventplanner.screens.eventList.eventListTab.EventListTabFragmentDirections
 import com.eriksargsyan.eventplanner.util.Constants.ARG_OBJECT
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialElevationScale
 import javax.inject.Inject
 
@@ -38,9 +33,20 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         viewModelFactory.create()
     }
 
-    private val eventAdapter: EventListAdapter by lazy { EventListAdapter{ event, view ->
+    private var eventStatus: Int = 0
+
+    private val eventAdapter: EventListAdapter by lazy {
+        EventListAdapter({ event, view ->
             onCardClicked(view, event)
-    } }
+        }, { event ->
+            onCheckedStateChanged(event)
+        })
+    }
+
+    private fun onCheckedStateChanged(event: Event) {
+        eventListViewModel.setNewEventStatus(event)
+    }
+
 
 
     override fun onAttach(context: Context) {
@@ -51,35 +57,30 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Page change callback
+        onPageChangeCallback()
+
+        // hide FAB when scrolled
+        recyclerEventListScrollListener()
+
+        // Move to Create Event
+        onFabClicked()
+
+        // Get event status
+        getEventStatus()
+
+        // Waiting for recycler load
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+
+        // Set cards to RecyclerView
+        binding.recyclerEventList.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = eventAdapter
+        }
+
         binding.apply {
-
-            postponeEnterTransition()
-            view.doOnPreDraw { startPostponedEnterTransition() }
-
-            recyclerEventList.apply {
-                setHasFixedSize(true)
-                layoutManager = LinearLayoutManager(requireContext())
-                adapter = eventAdapter
-            }
-
-            eventAdderFAB.setOnClickListener{
-                onFabClicked()
-            }
-
-            recyclerEventList.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (dy > 0) {
-                        if (eventAdderFAB.isShown) {
-                            eventAdderFAB.hide()
-                        }
-                    } else if (dy < 0) {
-                        if (!eventAdderFAB.isShown) {
-                            eventAdderFAB.show()
-                        }
-                    }
-                }
-            })
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
 
@@ -91,7 +92,9 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
                         }
                         is EventListState.Success -> {
                             loadingField.progressBar.visibility = View.GONE
-                            eventAdapter.submitList(eventState.eventList)
+                            eventAdapter.submitList(eventState.eventList.filter {
+                                it.status.status == eventStatus
+                            })
                         }
                         is EventListState.Error -> {
                             eventListViewModel.setLoadingState()
@@ -104,6 +107,14 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         }
 
 
+    }
+
+    private fun updateRecycler() {
+        binding.recyclerEventList.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = eventAdapter
+        }
     }
 
     private fun onCardClicked(cardView: View, event: Event) {
@@ -123,20 +134,63 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         val extras = FragmentNavigatorExtras(
             cardView to eventCardDetailTransitionName
         )
-        val directions = EventListTabFragmentDirections.actionEventListTabFragmentToEventViewingFragment(
-            eventId = event.id, eventName = event.eventName
-        )
-            findNavController().navigate(directions, extras)
+        val directions =
+            EventListTabFragmentDirections.actionEventListTabFragmentToEventViewingFragment(
+                eventId = event.id, eventName = event.eventName
+            )
+        findNavController().navigate(directions, extras)
     }
 
     private fun onFabClicked() {
-        exitTransition = null
-        reenterTransition = null
-        findNavController().navigate(
-            EventListTabFragmentDirections.actionEventListTabFragmentToEventAddAndEditFragment(
-                eventId = 0
+        binding.eventAdderFAB.setOnClickListener {
+            exitTransition = null
+            reenterTransition = null
+            findNavController().navigate(
+                EventListTabFragmentDirections.actionEventListTabFragmentToEventAddAndEditFragment(
+                    eventId = 0,
+                    eventStatus = 0
+                )
             )
-        )
+        }
+
+    }
+
+    private fun recyclerEventListScrollListener() {
+        with(binding) {
+            recyclerEventList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (dy > 0) {
+                        if (eventAdderFAB.isShown) {
+                            eventAdderFAB.hide()
+                        }
+                    } else if (dy < 0) {
+                        if (!eventAdderFAB.isShown) {
+                            eventAdderFAB.show()
+                        }
+                    }
+                }
+            })
+        }
+
+    }
+
+    private fun getEventStatus() {
+        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
+            eventStatus = getInt(ARG_OBJECT)
+        }
+    }
+
+    private fun onPageChangeCallback() {
+        val myPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                eventListViewModel.setLoadingState()
+            }
+        }
+        parentFragment
+            ?.view
+            ?.findViewById<ViewPager2>(R.id.pager)
+            ?.registerOnPageChangeCallback(myPageChangeCallback)
     }
 
 }

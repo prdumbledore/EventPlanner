@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
+import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
 import com.eriksargsyan.eventplanner.util.Constants.TABLE_NAME
 import java.util.*
 
@@ -37,6 +38,9 @@ data class EventDB(
     @ColumnInfo(name = "event_country")
     val country: String,
 
+    @ColumnInfo(name = "event_status")
+    val status: EventStatus,
+
     )
 
 class DateConverter {
@@ -48,6 +52,18 @@ class DateConverter {
     @TypeConverter
     fun fromDate(date: Date): Long {
         return date.time
+    }
+}
+
+class StatusConverter {
+    @TypeConverter
+    fun toStatus(status: Int): EventStatus {
+        return EventStatus.fromStatus(status)
+    }
+
+    @TypeConverter
+    fun fromDate(eventStatus: EventStatus): Int {
+        return eventStatus.status
     }
 }
 

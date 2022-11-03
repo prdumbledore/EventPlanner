@@ -2,12 +2,15 @@ package com.eriksargsyan.eventplanner.di
 
 import com.eriksargsyan.eventplanner.data.network.EventAPI
 import com.eriksargsyan.eventplanner.util.Constants.BASE_URL
+import com.eriksargsyan.eventplanner.util.Dispatchers
+import com.eriksargsyan.eventplanner.util.IO
 import com.eriksargsyan.eventplanner.util.NetworkCityNameMapper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 
 import dagger.Provides
+import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -50,5 +53,9 @@ object RetrofitModule {
     @Provides
     @Singleton
     fun provideNetworkMapper(): NetworkCityNameMapper = NetworkCityNameMapper()
+
+    @Provides
+    @IO
+    fun ioDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
 }

@@ -11,7 +11,11 @@ import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.data.network.EventAPI
 import com.eriksargsyan.eventplanner.util.Constants.API_KEY
 import com.eriksargsyan.eventplanner.util.DatabaseMapper
+import com.eriksargsyan.eventplanner.util.IO
 import com.eriksargsyan.eventplanner.util.NetworkCityNameMapper
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -30,29 +34,40 @@ class EventRepositoryImpl @Inject constructor(
     private val networkCityNameMapper: NetworkCityNameMapper,
     private val databaseMapper: DatabaseMapper,
     private val context: Context,
+    @IO private val dispatcherIO: CoroutineDispatcher
 ) : EventRepository {
 
     override suspend fun getGeolocation(cityName: String): List<CityName> {
-        val cityNameNetList =
-            apiEvent.getGeoPosition(cityName = cityName, limit = 5, apiKey = API_KEY)
-        return networkCityNameMapper.entityToDomainMapList(cityNameNetList)
+        return withContext(dispatcherIO) {
+            val cityNameNetList =
+                apiEvent.getGeoPosition(cityName = cityName, limit = 5, apiKey = API_KEY)
+            return@withContext networkCityNameMapper.entityToDomainMapList(cityNameNetList)
+        }
     }
 
     override suspend fun saveEvent(event: Event) {
-        val eventDB = databaseMapper.domainToEntityMap(event)
-        eventDao.insertEvent(eventDB)
+        withContext(dispatcherIO) {
+            val eventDB = databaseMapper.domainToEntityMap(event)
+            eventDao.insertEvent(eventDB)
+        }
     }
 
     override suspend fun getAllEvents(): List<Event> {
-        return databaseMapper.entityToDomainMapList(eventDao.getEvents())
+        return withContext(dispatcherIO) {
+            return@withContext databaseMapper.entityToDomainMapList(eventDao.getEvents())
+        }
     }
 
     override suspend fun getEvent(id: Int): Event {
-        return databaseMapper.entityToDomainMap(eventDao.getEventById(id))
+        return withContext(dispatcherIO) {
+            return@withContext databaseMapper.entityToDomainMap(eventDao.getEventById(id))
+        }
     }
 
     override suspend fun deleteEvent(id: Int) {
-        eventDao.deleteEventById(id)
+        withContext(dispatcherIO) {
+            eventDao.deleteEventById(id)
+        }
     }
 
 

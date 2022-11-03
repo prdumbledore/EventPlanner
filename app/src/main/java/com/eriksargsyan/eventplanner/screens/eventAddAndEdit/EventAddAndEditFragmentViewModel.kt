@@ -6,17 +6,20 @@ import androidx.lifecycle.viewModelScope
 import com.eriksargsyan.eventplanner.data.EventRepository
 import com.eriksargsyan.eventplanner.data.model.domain.CityName
 import com.eriksargsyan.eventplanner.data.model.domain.Event
+import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
+import com.eriksargsyan.eventplanner.screens.eventList.EventListState
 import com.eriksargsyan.eventplanner.util.ErrorConstants.NO_NETWORK_CONNECTION
 import com.eriksargsyan.eventplanner.util.ErrorConstants.STATE_EXCEPTION
+import com.eriksargsyan.eventplanner.util.ErrorConstants.UNKNOWN_HOST_EXCEPTION
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import java.util.*
 
-class EventAddingFragmentViewModel(
+class EventAddAndEditFragmentViewModel(
     private val eventRepository: EventRepository
 ) : ViewModel() {
 
@@ -25,13 +28,16 @@ class EventAddingFragmentViewModel(
 
 
     fun fetchEventGeo(cityName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _state.value = if (eventRepository.hasNetworkAccess()) {
                 try {
                     if (cityName.isEmpty()) SearchListState.Searching(emptyList())
                     else SearchListState.Searching(eventRepository.getGeolocation(cityName = cityName))
                 } catch (e: IllegalStateException) {
                     SearchListState.Error(STATE_EXCEPTION)
+                } catch (e: UnknownHostException) {
+                    e.printStackTrace()
+                    SearchListState.Error(UNKNOWN_HOST_EXCEPTION)
                 }
             } else {
                 SearchListState.Error(NO_NETWORK_CONNECTION)
@@ -45,10 +51,11 @@ class EventAddingFragmentViewModel(
         eventName: String,
         eventDate: Date,
         cityName: CityName,
-        addressLine: String,
-        eventDescription: String
+        eventAddressLine: String,
+        eventDescription: String,
+        eventStatus: EventStatus,
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             eventRepository.saveEvent(
                 Event(
                     id = eventId,
@@ -57,22 +64,18 @@ class EventAddingFragmentViewModel(
                     cityName = cityName.name,
                     latitude = cityName.latitude,
                     longitude = cityName.longitude,
-                    addressLine = addressLine,
+                    addressLine = eventAddressLine,
                     description = eventDescription,
                     country = cityName.country,
+                    status = eventStatus
                 )
             )
-
-            _state.value = try {
-                SearchListState.Result
-            } catch (e: IllegalStateException) {
-                SearchListState.Error(STATE_EXCEPTION)
-            }
+            _state.value = SearchListState.Result
         }
     }
 
     fun fetchField(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _state.value = try {
                 SearchListState.Editing(eventRepository.getEvent(id))
             } catch (e: IllegalStateException) {
@@ -81,13 +84,17 @@ class EventAddingFragmentViewModel(
         }
     }
 
+    fun setLoadingState() {
+        _state.value = SearchListState.Loading
+    }
+
     class EventAddingFragmentViewModelFactory @AssistedInject constructor(
         private val eventRepository: EventRepository
     ) : ViewModelProvider.Factory {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>) =
-            EventAddingFragmentViewModel(eventRepository) as T
+            EventAddAndEditFragmentViewModel(eventRepository) as T
 
         @AssistedFactory
         interface Factory {

@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eriksargsyan.eventplanner.data.EventRepository
+import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.util.ErrorConstants.STATE_EXCEPTION
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ class EventListViewModel(
 
     fun fetchEvents() {
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _state.value = try {
                 EventListState.Success(eventRepository.getAllEvents())
             } catch (e: IllegalStateException) {
@@ -29,6 +29,13 @@ class EventListViewModel(
             }
         }
 
+    }
+
+    fun setNewEventStatus(event: Event) {
+        viewModelScope.launch {
+            eventRepository.saveEvent(event)
+            _state.value = EventListState.Loading
+        }
     }
 
     fun setLoadingState() {

@@ -37,6 +37,7 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
 
     private val args: EventViewingFragmentArgs by navArgs()
     private var eventId: Int = 0
+    private var eventStatus: Int = 0
 
 
     override fun onAttach(context: Context) {
@@ -95,7 +96,7 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
             eventPlace.text = if (event.addressLine.isEmpty()) event.cityName
             else " ${event.cityName}, ${event.addressLine}"
             eventDescription.text = event.description
-
+            eventStatus = event.status.status
         }
     }
 
@@ -117,7 +118,8 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
                         findNavController().navigate(
                             EventViewingFragmentDirections
                                 .actionEventViewingFragmentToEventAddAndEditFragment(
-                                    eventId = eventId
+                                    eventId = eventId,
+                                    eventStatus = eventStatus,
                                 )
                         )
                         true

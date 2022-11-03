@@ -1,10 +1,12 @@
 package com.eriksargsyan.eventplanner.screens.eventList.eventListTab
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.eriksargsyan.eventplanner.screens.eventList.EventListFragment
 import com.eriksargsyan.eventplanner.util.Constants.ARG_OBJECT
 
@@ -16,9 +18,11 @@ class TabLayoutAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
 
     override fun createFragment(position: Int): Fragment {
         val fragment = EventListFragment()
+
         fragment.arguments = Bundle().apply {
             putInt(ARG_OBJECT, position)
         }
+
         return fragment
     }
 }

@@ -43,6 +43,10 @@
             android:name="eventId"
             android:defaultValue="0"
             app:argType="integer" />
+        <argument
+            android:name="eventStatus"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/EventViewingFragment"

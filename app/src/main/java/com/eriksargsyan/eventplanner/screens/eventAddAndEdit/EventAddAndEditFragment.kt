@@ -27,10 +27,10 @@ import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.appComponent
 import com.eriksargsyan.eventplanner.data.model.domain.CityName
 import com.eriksargsyan.eventplanner.data.model.domain.Event
+import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
 import com.eriksargsyan.eventplanner.databinding.FragmentEventAddAndEditBinding
 import com.eriksargsyan.eventplanner.hideKeyboard
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
-import com.eriksargsyan.eventplanner.screens.eventViewing.EventViewingFragmentArgs
 import com.eriksargsyan.eventplanner.util.Constants.ARG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.DIALOG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.REQUEST_KEY
@@ -48,15 +48,16 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
     private lateinit var eventDate: Date
     private var cityName: CityName? = null
 
-    private val args: EventViewingFragmentArgs by navArgs()
+    private val args: EventAddAndEditFragmentArgs by navArgs()
     private var eventId: Int = 0
+    private var eventStatus: Int = 0
 
     @Inject
-    lateinit var viewModelFactory: EventAddingFragmentViewModel.EventAddingFragmentViewModelFactory.Factory
+    lateinit var viewModelFactory: EventAddAndEditFragmentViewModel.EventAddingFragmentViewModelFactory.Factory
 
     private var searchResult: List<CityName> = emptyList()
 
-    private val eventAddAndEditViewModel: EventAddingFragmentViewModel by viewModels {
+    private val eventAddAndEditViewModel: EventAddAndEditFragmentViewModel by viewModels {
         viewModelFactory.create()
     }
 
@@ -82,6 +83,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         eventId = args.eventId
+        eventStatus = args.eventStatus
         (activity as AppCompatActivity).supportActionBar?.title =
             if (eventId == 0) getString(R.string.event_create_str)
             else getString(R.string.event_edit_str)
@@ -140,7 +142,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                             )
                         }
                         is SearchListState.Error -> {
-                            //TODO
+                            eventAddAndEditViewModel.setLoadingState()
                         }
                     }
                 }
@@ -210,7 +212,8 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                     eventDate,
                     cityName!!,
                     eventAddressLine.editText?.text.toString(),
-                    eventDescriptionLayout.editText?.text.toString()
+                    eventDescriptionLayout.editText?.text.toString(),
+                    EventStatus.fromStatus(eventStatus)
                 )
 
         }

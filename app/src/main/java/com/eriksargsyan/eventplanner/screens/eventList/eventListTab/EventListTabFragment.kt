@@ -2,6 +2,7 @@ package com.eriksargsyan.eventplanner.screens.eventList.eventListTab
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.viewpager2.widget.ViewPager2
@@ -25,6 +26,7 @@ class EventListTabFragment: BaseFragment<FragmentEventListTabBinding>({
         viewPager = binding.pager
         tabLayoutAdapter = TabLayoutAdapter(childFragmentManager, lifecycle)
         viewPager.adapter = tabLayoutAdapter
+
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             when (position) {
                 0 -> {
@@ -32,6 +34,7 @@ class EventListTabFragment: BaseFragment<FragmentEventListTabBinding>({
                     tab.icon =  ContextCompat.getDrawable(requireContext(), R.drawable.baseline_alarm_black_24dp)
                 }
                 1 -> {
+
                     tab.text = getString(R.string.visited_label)
                     tab.icon =  ContextCompat.getDrawable(requireContext(), R.drawable.baseline_done_black_24dp)
                 }
