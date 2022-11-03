@@ -5,10 +5,15 @@
       <map>
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_alarm_black_24dp.xml" value="0.2395" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_close_black_24dp.xml" value="0.2555" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_dash_24dp.xml" value="0.2115" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_delete_black_24dp.xml" value="0.143" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_done_black_24dp.xml" value="0.2555" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_double_dash_24dp.xml" value="0.2115" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_horizontal_rule_24.xml" value="0.2115" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_mode_edit_black_24dp.xml" value="0.143" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/baseline_search_black_24dp.xml" value="0.2555" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/dash.xml" value="0.2115" />
+        <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/ic_baseline_equalizer_24.xml" value="0.2115" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2555" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/eriks/AndroidStudioProjects/EventPlanner/app/src/main/res/layout/content_main.xml" value="0.14722222222222223" />

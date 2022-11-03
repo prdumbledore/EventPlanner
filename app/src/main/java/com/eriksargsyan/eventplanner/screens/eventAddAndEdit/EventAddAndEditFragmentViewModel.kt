@@ -56,21 +56,26 @@ class EventAddAndEditFragmentViewModel(
         eventStatus: EventStatus,
     ) {
         viewModelScope.launch {
-            eventRepository.saveEvent(
-                Event(
-                    id = eventId,
-                    eventName = eventName,
-                    date = eventDate,
-                    cityName = cityName.name,
-                    latitude = cityName.latitude,
-                    longitude = cityName.longitude,
-                    addressLine = eventAddressLine,
-                    description = eventDescription,
-                    country = cityName.country,
-                    status = eventStatus
+            _state.value = try {
+                SearchListState.Result(
+                    eventRepository.saveEvent(
+                        Event(
+                            id = eventId,
+                            eventName = eventName,
+                            date = eventDate,
+                            cityName = cityName.name,
+                            latitude = cityName.latitude,
+                            longitude = cityName.longitude,
+                            addressLine = eventAddressLine,
+                            description = eventDescription,
+                            country = cityName.country,
+                            status = eventStatus
+                        )
+                    )
                 )
-            )
-            _state.value = SearchListState.Result
+            } catch (e: IllegalStateException) {
+                SearchListState.Error(STATE_EXCEPTION)
+            }
         }
     }
 

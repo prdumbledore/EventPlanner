@@ -56,6 +56,45 @@
             app:layout_constraintTop_toBottomOf="@+id/weather_temp"
             tools:text="@tools:sample/cities" />
 
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:checkedChip="@+id/coming_chip"
+            app:selectionRequired="true"
+            app:singleSelection="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_place">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/coming_chip"
+                style="@style/Widget.Material3.Chip.Suggestion.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/coming_chip"
+                app:chipIconVisible="true"
+                app:chipIcon="@drawable/baseline_alarm_black_24dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/visited_chip"
+                style="@style/Widget.Material3.Chip.Suggestion.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/visited_chip"
+                app:chipIconVisible="true"
+                app:chipIcon="@drawable/baseline_done_black_24dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/missed_chip"
+                style="@style/Widget.Material3.Chip.Suggestion.Elevated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/missed_chip"
+                app:chipIconVisible="true"
+                app:chipIcon="@drawable/baseline_close_black_24dp"/>
+        </com.google.android.material.chip.ChipGroup>
+
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/description_divider"
@@ -65,14 +104,14 @@
             app:dividerInsetEnd="16dp"
             app:dividerInsetStart="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/event_place" />
+            app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
 
 
         <TextView
             android:id="@+id/event_description"
             style="@style/Theme.EventPlanner.TextView.Extra"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"

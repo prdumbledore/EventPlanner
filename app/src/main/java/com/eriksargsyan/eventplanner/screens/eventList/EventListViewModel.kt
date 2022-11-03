@@ -31,13 +31,6 @@ class EventListViewModel(
 
     }
 
-    fun setNewEventStatus(event: Event) {
-        viewModelScope.launch {
-            eventRepository.saveEvent(event)
-            _state.value = EventListState.Loading
-        }
-    }
-
     fun setLoadingState() {
         _state.value = EventListState.Loading
     }

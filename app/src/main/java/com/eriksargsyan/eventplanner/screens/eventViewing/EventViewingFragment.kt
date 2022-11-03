@@ -18,6 +18,7 @@ import androidx.navigation.fragment.navArgs
 import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.appComponent
 import com.eriksargsyan.eventplanner.data.model.domain.Event
+import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
 import com.eriksargsyan.eventplanner.databinding.FragmentEventViewingBinding
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
 import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
@@ -38,6 +39,7 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
     private val args: EventViewingFragmentArgs by navArgs()
     private var eventId: Int = 0
     private var eventStatus: Int = 0
+    private lateinit var event: Event
 
 
     override fun onAttach(context: Context) {
@@ -56,11 +58,12 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        onCheckedStateChanged()
+
         menuLoading()
+
         with(binding) {
-
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-
                 eventViewingViewModel.state.collect { eventState ->
                     when (eventState) {
                         is EventViewingState.Loading -> {
@@ -69,6 +72,7 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
                         }
                         is EventViewingState.Success -> {
                             loadingField.progressBar.visibility = View.GONE
+                            event = eventState.event
                             fillField(eventState.event)
                         }
                         is EventViewingState.Delete -> {
@@ -82,21 +86,21 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
                         }
                     }
                 }
-
             }
-
         }
+
     }
 
     private fun fillField(event: Event) {
         binding.apply {
             eventDate.text = dateToDMY(event.date)
-            weatherIcon.setImageResource(R.drawable.weather_icon)
+            weatherIcon.setImageResource(R.drawable.baseline_double_dash_24dp)
             weatherTemp.text = getString(R.string.weather_temp)
             eventPlace.text = if (event.addressLine.isEmpty()) event.cityName
             else " ${event.cityName}, ${event.addressLine}"
             eventDescription.text = event.description
             eventStatus = event.status.status
+            chipGroup.check(event.status.id)
         }
     }
 
@@ -129,6 +133,15 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
+
+    private fun onCheckedStateChanged() {
+        binding.chipGroup.setOnCheckedStateChangeListener { _, _ ->
+            eventViewingViewModel.setNewEventStatus(
+                event.copy(status = EventStatus.fromId(binding.chipGroup.checkedChipId))
+            )
+        }
+    }
+
 
 
 }

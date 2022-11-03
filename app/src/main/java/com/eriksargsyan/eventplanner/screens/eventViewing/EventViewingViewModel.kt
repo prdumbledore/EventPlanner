@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eriksargsyan.eventplanner.data.EventRepository
+import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.screens.eventList.EventListState
 import com.eriksargsyan.eventplanner.util.ErrorConstants.STATE_EXCEPTION
 import dagger.assisted.AssistedFactory
@@ -25,7 +26,7 @@ class EventViewingViewModel(
     fun fetchEventDetails(id: Int) {
         viewModelScope.launch {
             _state.value = try {
-               EventViewingState.Success(eventRepository.getEvent(id))
+                EventViewingState.Success(eventRepository.getEvent(id))
             } catch (e: IllegalStateException) {
                 EventViewingState.Error(STATE_EXCEPTION)
             }
@@ -37,6 +38,17 @@ class EventViewingViewModel(
             _state.value = try {
                 eventRepository.deleteEvent(id)
                 EventViewingState.Delete
+            } catch (e: IllegalStateException) {
+                EventViewingState.Error(STATE_EXCEPTION)
+            }
+        }
+
+    }
+
+    fun setNewEventStatus(event: Event) {
+        viewModelScope.launch {
+            _state.value = try {
+                EventViewingState.Success(eventRepository.saveEvent(event))
             } catch (e: IllegalStateException) {
                 EventViewingState.Error(STATE_EXCEPTION)
             }

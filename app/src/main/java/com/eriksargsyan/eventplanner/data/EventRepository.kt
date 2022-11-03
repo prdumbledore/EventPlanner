@@ -15,13 +15,14 @@ import com.eriksargsyan.eventplanner.util.IO
 import com.eriksargsyan.eventplanner.util.NetworkCityNameMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
 interface EventRepository {
     suspend fun getGeolocation(cityName: String): List<CityName>
-    suspend fun saveEvent(event: Event)
+    suspend fun saveEvent(event: Event): Event
     suspend fun getAllEvents(): List<Event>
     suspend fun getEvent(id: Int): Event
     suspend fun deleteEvent(id: Int)
@@ -45,10 +46,11 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveEvent(event: Event) {
-        withContext(dispatcherIO) {
+    override suspend fun saveEvent(event: Event): Event {
+        return withContext(dispatcherIO) {
             val eventDB = databaseMapper.domainToEntityMap(event)
-            eventDao.insertEvent(eventDB)
+            launch { eventDao.insertEvent(eventDB) }
+            return@withContext event
         }
     }
 
@@ -66,7 +68,7 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun deleteEvent(id: Int) {
         withContext(dispatcherIO) {
-            eventDao.deleteEventById(id)
+            launch { eventDao.deleteEventById(id) }
         }
     }
 

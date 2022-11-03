@@ -1,6 +1,5 @@
 package com.eriksargsyan.eventplanner.util
 
-
 import com.eriksargsyan.eventplanner.data.model.database.EventDB
 import com.eriksargsyan.eventplanner.data.model.domain.Event
 

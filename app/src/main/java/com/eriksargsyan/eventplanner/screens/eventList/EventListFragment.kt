@@ -3,11 +3,15 @@ package com.eriksargsyan.eventplanner.screens.eventList
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.cardview.widget.CardView
+import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -18,6 +22,7 @@ import com.eriksargsyan.eventplanner.databinding.FragmentEventListBinding
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
 import com.eriksargsyan.eventplanner.screens.eventList.eventListTab.EventListTabFragmentDirections
 import com.eriksargsyan.eventplanner.util.Constants.ARG_OBJECT
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.transition.MaterialElevationScale
 import javax.inject.Inject
 
@@ -36,18 +41,10 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
     private var eventStatus: Int = 0
 
     private val eventAdapter: EventListAdapter by lazy {
-        EventListAdapter({ event, view ->
+        EventListAdapter { event, view ->
             onCardClicked(view, event)
-        }, { event ->
-            onCheckedStateChanged(event)
-        })
+        }
     }
-
-    private fun onCheckedStateChanged(event: Event) {
-        eventListViewModel.setNewEventStatus(event)
-    }
-
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -74,11 +71,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         view.doOnPreDraw { startPostponedEnterTransition() }
 
         // Set cards to RecyclerView
-        binding.recyclerEventList.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = eventAdapter
-        }
+        updateRecycler()
 
         binding.apply {
 
@@ -112,7 +105,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
     private fun updateRecycler() {
         binding.recyclerEventList.apply {
             setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = eventAdapter
         }
     }
