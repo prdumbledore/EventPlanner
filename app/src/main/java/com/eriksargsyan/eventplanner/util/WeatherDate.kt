@@ -12,16 +12,13 @@ object WeatherDate {
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val times = listOf("12", "15", "18", "21")
 
         list.forEachIndexed { index, weather ->
             val time = weather.date.split(" ")[1].split(":")[0]
             val ymd = weather.date.split(" ")[0].split("-").map { it.toInt() }
             if (year == ymd[0] && month + 1 == ymd[1] && day == ymd[2]) {
-
-                return when(time) {
-                    "12", "15", "18", "21"-> list[index]
-                    else -> Weather()
-                }
+                 if(time in times) return list[index]
             }
         }
 

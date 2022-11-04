@@ -11,5 +11,6 @@ object Constants {
     const val ARG_DATE = "date"
     const val REQUEST_KEY = "requestKey"
     const val ARG_OBJECT = "object"
+    const val SHARED_PREF_TOKEN = "weather_key"
 
 }

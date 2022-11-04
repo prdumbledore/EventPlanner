@@ -4,16 +4,15 @@ package com.eriksargsyan.eventplanner.data
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
 import com.eriksargsyan.eventplanner.data.database.EventDao
 import com.eriksargsyan.eventplanner.data.model.domain.CityName
 import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.data.model.domain.Weather
 import com.eriksargsyan.eventplanner.data.network.EventAPI
 import com.eriksargsyan.eventplanner.util.Constants.API_KEY
-import com.eriksargsyan.eventplanner.util.mappers.DatabaseMapper
 import com.eriksargsyan.eventplanner.util.IO
 import com.eriksargsyan.eventplanner.util.WeatherDate.getWeatherPosition
+import com.eriksargsyan.eventplanner.util.mappers.DatabaseMapper
 import com.eriksargsyan.eventplanner.util.mappers.NetworkCityNameMapper
 import com.eriksargsyan.eventplanner.util.mappers.NetworkWeatherMapper
 import kotlinx.coroutines.CoroutineDispatcher
@@ -26,6 +25,7 @@ interface EventRepository {
     suspend fun getGeolocation(cityName: String): List<CityName>
     suspend fun saveEvent(event: Event): Event
     suspend fun getAllEvents(): List<Event>
+    suspend fun getAllEventsWithWeatherUpdate(): List<Event>
     suspend fun getEvent(id: Int): Event
     suspend fun deleteEvent(id: Int)
     suspend fun hasNetworkAccess(): Boolean
@@ -51,15 +51,7 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun saveEvent(event: Event): Event {
         return withContext(dispatcherIO) {
-            val weatherList = networkWeatherMapper.entityToDomainMap(
-                apiEvent.getWeather(
-                    latitude = event.latitude,
-                    longitude = event.longitude,
-                    apiKey = API_KEY
-                )
-            )
-
-            val weather = getWeatherPosition(weatherList, event.date)
+            val weather = getWeather(event)
             val eventDB = databaseMapper.domainToEntityMap(event.copy(weather = weather))
             launch { eventDao.insertEvent(eventDB) }
             return@withContext event.copy(weather = weather)
@@ -69,6 +61,13 @@ class EventRepositoryImpl @Inject constructor(
     override suspend fun getAllEvents(): List<Event> {
         return withContext(dispatcherIO) {
             return@withContext databaseMapper.entityToDomainMapList(eventDao.getEvents())
+        }
+    }
+
+    override suspend fun getAllEventsWithWeatherUpdate(): List<Event> {
+        return withContext(dispatcherIO) {
+            val list = databaseMapper.entityToDomainMapList(eventDao.getEvents())
+            return@withContext list.map { event ->  event.copy(weather = getWeather(event)) }
         }
     }
 
@@ -84,7 +83,6 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
-
     override suspend fun hasNetworkAccess(): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -99,6 +97,15 @@ class EventRepositoryImpl @Inject constructor(
         }
     }
 
+    private suspend fun getWeather(event: Event): Weather {
+        val weatherList = networkWeatherMapper.entityToDomainMap(
+            apiEvent.getWeather(
+                latitude = event.latitude,
+                longitude = event.longitude,
+                apiKey = API_KEY
+            )
+        )
+        return getWeatherPosition(weatherList, event.date)
+    }
 
-    //TODO
 }

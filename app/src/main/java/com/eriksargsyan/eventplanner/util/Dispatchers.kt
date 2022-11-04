@@ -1,8 +1,8 @@
 package com.eriksargsyan.eventplanner.util
 
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Qualifier
 import javax.inject.Singleton
-import kotlinx.coroutines.Dispatchers
 
 
 @Singleton

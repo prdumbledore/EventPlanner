@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.eriksargsyan.eventplanner.R
 
 open class BaseFragment<BINDING: ViewBinding>(
     val inflateFun: (
@@ -27,6 +29,14 @@ open class BaseFragment<BINDING: ViewBinding>(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun showMessage() {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.no_network_connection),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
 

@@ -8,9 +8,7 @@ import com.eriksargsyan.eventplanner.data.model.domain.CityName
 import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
 import com.eriksargsyan.eventplanner.data.model.domain.Weather
-import com.eriksargsyan.eventplanner.screens.eventList.EventListState
 import com.eriksargsyan.eventplanner.util.ErrorConstants.NO_NETWORK_CONNECTION
-import com.eriksargsyan.eventplanner.util.ErrorConstants.STATE_EXCEPTION
 import com.eriksargsyan.eventplanner.util.ErrorConstants.UNKNOWN_HOST_EXCEPTION
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -55,7 +53,7 @@ class EventAddAndEditFragmentViewModel(
         eventStatus: EventStatus,
     ) {
         viewModelScope.launch {
-            _state.value =
+            _state.value = try {
                 SearchListState.Result(
                     eventRepository.saveEvent(
                         Event(
@@ -73,6 +71,10 @@ class EventAddAndEditFragmentViewModel(
                         )
                     )
                 )
+            } catch (e: UnknownHostException) {
+                e.printStackTrace()
+                SearchListState.Error(NO_NETWORK_CONNECTION)
+            }
         }
     }
 

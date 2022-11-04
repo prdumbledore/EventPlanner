@@ -1,7 +1,10 @@
 package com.eriksargsyan.eventplanner.util.mappers
 
 import com.eriksargsyan.eventplanner.data.model.domain.Weather
-import com.eriksargsyan.eventplanner.data.model.network.*
+import com.eriksargsyan.eventplanner.data.model.network.WeatherDetailsNet
+import com.eriksargsyan.eventplanner.data.model.network.WeatherListNet
+import com.eriksargsyan.eventplanner.data.model.network.WeatherNet
+import com.eriksargsyan.eventplanner.data.model.network.WeatherTempNet
 import kotlin.math.round
 
 

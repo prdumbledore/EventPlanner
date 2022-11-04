@@ -1,8 +1,8 @@
 package com.eriksargsyan.eventplanner.di
 
 
-import androidx.room.Room
 import android.content.Context
+import androidx.room.Room
 import com.eriksargsyan.eventplanner.data.database.EventDao
 import com.eriksargsyan.eventplanner.data.database.EventDatabase
 import com.eriksargsyan.eventplanner.util.Constants.DATABASE_NAME

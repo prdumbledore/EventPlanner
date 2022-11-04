@@ -29,6 +29,8 @@
     <string name="missed_label">Missed</string>
     <string name="visited_label">Visited</string>
     <string name="coming_label">Coming</string>
+    <string name="no_network_connection">No network connection</string>
+    <string name="field_is_empty">Field is empty</string>
 
 
 </resources>

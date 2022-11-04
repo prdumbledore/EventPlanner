@@ -1,23 +1,22 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
-    android:tint="?attr/colorOnBackground"
     android:viewportWidth="7000"
     android:viewportHeight="7000">
     <path
         android:name="First dash"
-        android:fillColor="#000"
+        android:fillColor="?attr/colorOnBackground"
         android:pathData="m600 3200h2200v600h-2200v-600z" />
     <path
         android:name="First dash"
-        android:fillColor="#000"
+        android:fillColor="?attr/colorOnBackground"
         android:pathData="m2787 3213v574h-2174v-574zm-2187 -13v600h2200v-600z" />
     <path
         android:name="Second dash"
-        android:fillColor="#000"
+        android:fillColor="?attr/colorOnBackground"
         android:pathData="m4200 3200h2200v600h-2200v-600z" />
     <path
         android:name="Second dash"
-        android:fillColor="#000"
+        android:fillColor="?attr/colorOnBackground"
         android:pathData="m6387 3213v574h-2174v-574zm-2187 -13v600h2200v-600z" />
 </vector>

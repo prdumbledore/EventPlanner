@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,7 +22,9 @@ import com.eriksargsyan.eventplanner.screens.base.BaseFragment
 import com.eriksargsyan.eventplanner.screens.eventList.eventListTab.EventListTabFragmentDirections
 import com.eriksargsyan.eventplanner.util.Constants.ARG_OBJECT
 import com.google.android.material.transition.MaterialElevationScale
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -30,6 +35,10 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
     @Inject
     lateinit var viewModelFactory: EventListViewModel.EventListViewModelFactory.Factory
 
+    @Inject
+    lateinit var picasso: Picasso
+
+
     private val eventListViewModel: EventListViewModel by viewModels {
         viewModelFactory.create()
     }
@@ -37,9 +46,9 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
     private var eventStatus: Int = 0
 
     private val eventAdapter: EventListAdapter by lazy {
-        EventListAdapter { event, view ->
+        EventListAdapter({ event, view ->
             onCardClicked(view, event)
-        }
+        }, picasso)
     }
 
     override fun onAttach(context: Context) {
@@ -47,9 +56,11 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         context.appComponent.inject(this)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.loadingField.progressBar.visibility = View.VISIBLE
         // Page change callback
         onPageChangeCallback()
 
@@ -76,17 +87,16 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
                 eventListViewModel.state.collect { eventState ->
                     when (eventState) {
                         is EventListState.Loading -> {
-                            loadingField.progressBar.visibility = View.VISIBLE
                             eventListViewModel.fetchEvents()
-
                         }
                         is EventListState.Success -> {
                             loadingField.progressBar.visibility = View.GONE
                             eventAdapter.submitList(eventState.eventList.filter {
                                 it.status.status == eventStatus
-                            })
+                            }.sortedBy { it.date.time })
                         }
                         is EventListState.Error -> {
+                            showMessage()
                             eventListViewModel.setLoadingState()
                         }
                     }
@@ -97,7 +107,6 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         }
 
     }
-
 
     private fun updateRecycler() {
         binding.recyclerEvent.apply {
@@ -186,9 +195,10 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
     }
 
     private fun hideFab() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            delay(3000)
-            binding.eventAdderFAB.hide()
+        val lifecycle = viewLifecycleOwner.lifecycle
+        lifecycle.coroutineScope.launchWhenCreated {
+            delay(10000)
+            if (eventAdapter.itemCount >= 6) binding.eventAdderFAB.hide()
         }
     }
 

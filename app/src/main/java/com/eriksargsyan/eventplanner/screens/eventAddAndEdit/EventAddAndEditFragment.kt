@@ -35,7 +35,6 @@ import com.eriksargsyan.eventplanner.screens.eventAddAndEdit.datePicker.DatePick
 import com.eriksargsyan.eventplanner.util.Constants.ARG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.DIALOG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.REQUEST_KEY
-import com.eriksargsyan.eventplanner.util.ErrorConstants.FIELD_IS_EMPTY
 import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
 import java.util.*
 import javax.inject.Inject
@@ -63,23 +62,9 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
     }
 
     private val cursorAdapter by lazy {
-        with(binding) {
-
-            val from = arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1)
-            val to = intArrayOf(R.id.search_result)
-            val cursorAdapter = SimpleCursorAdapter(
-                context,
-                R.layout.item_search_recycler,
-                null,
-                from,
-                to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-            )
-
-            eventCityName.suggestionsAdapter = cursorAdapter
-            cursorAdapter
-        }
+        createCursorAdapter()
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,18 +82,77 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Load appbar menu
         menuLoading()
+
+        // create SearchView listener
         searchCreate()
 
+        // date listener
+        dateButtonClicked()
+
+        // Clear Name EditText error
+        clearError()
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+
+            eventAddAndEditViewModel.state.collect { searchState ->
+                when (searchState) {
+                    is SearchListState.Loading -> {
+                        if (eventId > 0) eventAddAndEditViewModel.fetchField(eventId)
+                    }
+                    is SearchListState.Searching -> {
+                        searchUpdate(searchState.cityList.map { "${it.name}, ${it.country}" })
+                        searchResult = searchState.cityList
+                    }
+                    is SearchListState.Editing -> {
+                        fillField(searchState.event)
+                    }
+                    is SearchListState.Result -> {
+                        findNavController().navigate(
+                            EventAddAndEditFragmentDirections.actionEventAddAndEditFragmentToEventListTabFragment()
+                        )
+                    }
+                    is SearchListState.Error -> {
+                        showMessage()
+                        eventAddAndEditViewModel.setLoadingState()
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun clearError() {
+        binding.eventNameEditText.doAfterTextChanged {
+            binding.eventNameLayout.error = null
+        }
+    }
+
+    private fun createCursorAdapter(): CursorAdapter {
         with(binding) {
 
-            eventNameEditText.doAfterTextChanged {
-                eventNameLayout.error = null
-            }
+            val from = arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1)
+            val to = intArrayOf(R.id.search_result)
+            val cursorAdapter = SimpleCursorAdapter(
+                context,
+                R.layout.item_search_recycler,
+                null,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+            )
+
+            eventCityName.suggestionsAdapter = cursorAdapter
+            return cursorAdapter
+        }
+    }
+
+    private fun dateButtonClicked() {
+        with(binding) {
             dateButton.setOnClickListener {
                 DatePickerFragment().show(
                     this@EventAddAndEditFragment.parentFragmentManager,
@@ -120,39 +164,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                     dateButtonLayout.error = null
                 }
             }
-
-
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-
-                eventAddAndEditViewModel.state.collect { searchState ->
-                    when (searchState) {
-                        is SearchListState.Loading -> {
-                            if (eventId > 0) eventAddAndEditViewModel.fetchField(eventId)
-                        }
-                        is SearchListState.Searching -> {
-                            searchUpdate(searchState.cityList.map { "${it.name}, ${it.country}" })
-                            searchResult = searchState.cityList
-
-                        }
-                        is SearchListState.Editing -> {
-                            fillField(searchState.event)
-                        }
-                        is SearchListState.Result -> {
-                            findNavController().navigate(
-                                EventAddAndEditFragmentDirections.actionEventAddAndEditFragmentToEventListTabFragment()
-                            )
-                        }
-                        is SearchListState.Error -> {
-                            eventAddAndEditViewModel.setLoadingState()
-                        }
-                    }
-                }
-
-            }
-
         }
-
-
     }
 
     private fun fillField(event: Event) {
@@ -196,14 +208,14 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
         with(binding) {
 
             eventNameLayout.error = if (eventNameEditText.text.toString().isEmpty())
-                FIELD_IS_EMPTY
+                getString(R.string.field_is_empty)
             else null
             dateButtonLayout.error =
                 if (dateButton.text.toString() == resources.getString(R.string.pick_date))
-                    FIELD_IS_EMPTY
+                    getString(R.string.field_is_empty)
                 else null
             eventCityNameLayout.error = if (searchResult.isEmpty() || cityName == null)
-                FIELD_IS_EMPTY
+                getString(R.string.field_is_empty)
             else null
 
             if (eventNameLayout.error == null && dateButtonLayout.error == null && eventCityNameLayout.error == null)

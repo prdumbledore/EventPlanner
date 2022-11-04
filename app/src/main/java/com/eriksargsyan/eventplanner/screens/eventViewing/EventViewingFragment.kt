@@ -3,7 +3,6 @@ package com.eriksargsyan.eventplanner.screens.eventViewing
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -20,10 +19,12 @@ import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.appComponent
 import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
+import com.eriksargsyan.eventplanner.data.model.network.WeatherIconType
 import com.eriksargsyan.eventplanner.databinding.FragmentEventViewingBinding
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
 import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
 import com.google.android.material.transition.MaterialContainerTransform
+import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
 class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate, container ->
@@ -32,6 +33,9 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
 
     @Inject
     lateinit var viewModelFactory: EventViewingViewModel.EventViewingViewModelFactory.Factory
+
+    @Inject
+    lateinit var picasso: Picasso
 
     private val eventViewingViewModel: EventViewingViewModel by viewModels {
         viewModelFactory.create()
@@ -85,6 +89,10 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
                                     .actionEventViewingFragmentToEventListTabFragment()
                             )
                         }
+                        is EventViewingState.Error -> {
+                            showMessage()
+                            eventViewingViewModel.setLoadingState()
+                        }
                     }
                 }
             }
@@ -95,12 +103,21 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
     private fun fillField(event: Event) {
         binding.apply {
             eventDate.text = dateToDMY(event.date)
-            weatherIcon.setImageResource(R.drawable.baseline_double_dash_24dp)
             if (event.weather.weatherTemp.isNotEmpty())
                 weatherTemp.text = root
                     .resources.getString(R.string.weather_temp, event.weather.weatherTemp)
             eventPlace.text = if (event.addressLine.isEmpty()) event.cityName
             else " ${event.cityName}, ${event.addressLine}"
+            try {
+                picasso
+                    .load(WeatherIconType.fromId(event.weather.weatherIcon).wIconURL.url)
+                    .placeholder(R.drawable.baseline_double_dash_24dp)
+                    .error(R.drawable.baseline_double_dash_24dp)
+                    .fit()
+                    .into(weatherIcon)
+            } catch (e: IllegalArgumentException) {
+                weatherIcon.setImageResource(R.drawable.baseline_double_dash_24dp)
+            }
             eventDescription.text = event.description
             eventStatus = event.status.status
             chipGroup.check(event.status.id)

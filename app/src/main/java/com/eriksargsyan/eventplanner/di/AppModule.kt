@@ -1,6 +1,5 @@
 package com.eriksargsyan.eventplanner.di
 
-
 import dagger.Module
 
 
@@ -8,6 +7,7 @@ import dagger.Module
     RetrofitModule::class,
     RepositoryModule::class,
     RoomModule::class,
-    PicassoModule::class
+    PicassoModule::class,
+    SharedPrefModule::class,
 ])
 class AppModule

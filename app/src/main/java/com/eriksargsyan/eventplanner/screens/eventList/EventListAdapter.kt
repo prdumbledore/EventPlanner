@@ -1,7 +1,6 @@
 package com.eriksargsyan.eventplanner.screens.eventList
 
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +9,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.data.model.domain.Event
+import com.eriksargsyan.eventplanner.data.model.network.WeatherIconType.Companion.fromId
 import com.eriksargsyan.eventplanner.databinding.ItemLayoutEventBinding
-
 import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
-import kotlinx.coroutines.withContext
+import com.squareup.picasso.Picasso
 
 
-class EventListAdapter(
+class EventListAdapter (
     private val onCardClickListener: (Event, View) -> Unit,
+    private val picasso: Picasso
 ) : ListAdapter<Event, EventListAdapter.EventViewHolder>(EventDiffCallback) {
 
     object EventDiffCallback : DiffUtil.ItemCallback<Event>() {
@@ -39,7 +39,17 @@ class EventListAdapter(
             with(binding) {
                 eventName.text = listItem.eventName
                 eventPlace.text = listItem.cityName
-                weatherIcon.setImageResource(R.drawable.baseline_double_dash_24dp)
+                try {
+                    picasso
+                        .load(fromId(listItem.weather.weatherIcon).wIconURL.url)
+                        .placeholder(R.drawable.baseline_double_dash_24dp)
+                        .error(R.drawable.baseline_double_dash_24dp)
+                        .fit()
+                        .into(weatherIcon)
+                } catch (e: IllegalArgumentException) {
+                    weatherIcon.setImageResource(R.drawable.baseline_double_dash_24dp)
+                }
+
                 if (listItem.weather.weatherTemp.isNotEmpty())
                     weatherTemp.text = root
                         .resources.getString(R.string.weather_temp, listItem.weather.weatherTemp)

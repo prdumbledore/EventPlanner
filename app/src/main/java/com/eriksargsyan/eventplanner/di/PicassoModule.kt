@@ -17,7 +17,7 @@ object PicassoModule {
     fun providePicasso(
         context: Context,
         okHttpDownloader: OkHttp3Downloader
-    ): Picasso? {
+    ): Picasso {
         return Picasso.Builder(context)
             .downloader(okHttpDownloader)
             .build()
