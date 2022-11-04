@@ -31,6 +31,7 @@ import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
 import com.eriksargsyan.eventplanner.databinding.FragmentEventAddAndEditBinding
 import com.eriksargsyan.eventplanner.hideKeyboard
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
+import com.eriksargsyan.eventplanner.screens.eventAddAndEdit.datePicker.DatePickerFragment
 import com.eriksargsyan.eventplanner.util.Constants.ARG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.DIALOG_DATE
 import com.eriksargsyan.eventplanner.util.Constants.REQUEST_KEY
@@ -213,7 +214,7 @@ class EventAddAndEditFragment : BaseFragment<FragmentEventAddAndEditBinding>(
                     cityName!!,
                     eventAddressLine.editText?.text.toString(),
                     eventDescriptionLayout.editText?.text.toString(),
-                    EventStatus.fromStatus(eventStatus)
+                    EventStatus.fromStatus(eventStatus),
                 )
 
         }

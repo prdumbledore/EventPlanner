@@ -7,6 +7,5 @@ sealed interface EventViewingState {
     object Loading : EventViewingState
     data class Success(val event: Event) : EventViewingState
     object Delete: EventViewingState
-    data class Error(val errorType: Int) : EventViewingState
 
 }

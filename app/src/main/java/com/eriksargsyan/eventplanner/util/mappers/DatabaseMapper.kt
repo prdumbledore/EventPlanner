@@ -1,4 +1,4 @@
-package com.eriksargsyan.eventplanner.util
+package com.eriksargsyan.eventplanner.util.mappers
 
 import com.eriksargsyan.eventplanner.data.model.database.EventDB
 import com.eriksargsyan.eventplanner.data.model.domain.Event
@@ -16,6 +16,7 @@ class DatabaseMapper : EntityToDomainMapper<EventDB, Event> {
         description = entity.description,
         country = entity.country,
         status = entity.status,
+        weather = entity.weather,
     )
 
     override fun domainToEntityMap(domain: Event) = EventDB (
@@ -29,11 +30,12 @@ class DatabaseMapper : EntityToDomainMapper<EventDB, Event> {
         description = domain.description,
         country = domain.country,
         status = domain.status,
+        weather = domain.weather,
     )
 
-    override fun entityToDomainMapList(entityList: List<EventDB>) =
+    fun entityToDomainMapList(entityList: List<EventDB>) =
         entityList.map { entityToDomainMap(it) }
 
-    override fun domainToEntityMapList(domainList: List<Event>) =
+    fun domainToEntityMapList(domainList: List<Event>) =
         domainList.map { domainToEntityMap(it) }
 }

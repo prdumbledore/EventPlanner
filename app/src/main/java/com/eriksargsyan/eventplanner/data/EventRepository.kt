@@ -8,13 +8,15 @@ import android.util.Log
 import com.eriksargsyan.eventplanner.data.database.EventDao
 import com.eriksargsyan.eventplanner.data.model.domain.CityName
 import com.eriksargsyan.eventplanner.data.model.domain.Event
+import com.eriksargsyan.eventplanner.data.model.domain.Weather
 import com.eriksargsyan.eventplanner.data.network.EventAPI
 import com.eriksargsyan.eventplanner.util.Constants.API_KEY
-import com.eriksargsyan.eventplanner.util.DatabaseMapper
+import com.eriksargsyan.eventplanner.util.mappers.DatabaseMapper
 import com.eriksargsyan.eventplanner.util.IO
-import com.eriksargsyan.eventplanner.util.NetworkCityNameMapper
+import com.eriksargsyan.eventplanner.util.WeatherDate.getWeatherPosition
+import com.eriksargsyan.eventplanner.util.mappers.NetworkCityNameMapper
+import com.eriksargsyan.eventplanner.util.mappers.NetworkWeatherMapper
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -33,6 +35,7 @@ class EventRepositoryImpl @Inject constructor(
     private val apiEvent: EventAPI,
     private val eventDao: EventDao,
     private val networkCityNameMapper: NetworkCityNameMapper,
+    private val networkWeatherMapper: NetworkWeatherMapper,
     private val databaseMapper: DatabaseMapper,
     private val context: Context,
     @IO private val dispatcherIO: CoroutineDispatcher
@@ -48,9 +51,18 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun saveEvent(event: Event): Event {
         return withContext(dispatcherIO) {
-            val eventDB = databaseMapper.domainToEntityMap(event)
+            val weatherList = networkWeatherMapper.entityToDomainMap(
+                apiEvent.getWeather(
+                    latitude = event.latitude,
+                    longitude = event.longitude,
+                    apiKey = API_KEY
+                )
+            )
+
+            val weather = getWeatherPosition(weatherList, event.date)
+            val eventDB = databaseMapper.domainToEntityMap(event.copy(weather = weather))
             launch { eventDao.insertEvent(eventDB) }
-            return@withContext event
+            return@withContext event.copy(weather = weather)
         }
     }
 

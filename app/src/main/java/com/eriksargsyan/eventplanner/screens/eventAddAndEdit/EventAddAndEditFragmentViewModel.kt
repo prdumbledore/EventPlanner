@@ -7,6 +7,7 @@ import com.eriksargsyan.eventplanner.data.EventRepository
 import com.eriksargsyan.eventplanner.data.model.domain.CityName
 import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
+import com.eriksargsyan.eventplanner.data.model.domain.Weather
 import com.eriksargsyan.eventplanner.screens.eventList.EventListState
 import com.eriksargsyan.eventplanner.util.ErrorConstants.NO_NETWORK_CONNECTION
 import com.eriksargsyan.eventplanner.util.ErrorConstants.STATE_EXCEPTION
@@ -33,8 +34,6 @@ class EventAddAndEditFragmentViewModel(
                 try {
                     if (cityName.isEmpty()) SearchListState.Searching(emptyList())
                     else SearchListState.Searching(eventRepository.getGeolocation(cityName = cityName))
-                } catch (e: IllegalStateException) {
-                    SearchListState.Error(STATE_EXCEPTION)
                 } catch (e: UnknownHostException) {
                     e.printStackTrace()
                     SearchListState.Error(UNKNOWN_HOST_EXCEPTION)
@@ -56,7 +55,7 @@ class EventAddAndEditFragmentViewModel(
         eventStatus: EventStatus,
     ) {
         viewModelScope.launch {
-            _state.value = try {
+            _state.value =
                 SearchListState.Result(
                     eventRepository.saveEvent(
                         Event(
@@ -69,23 +68,17 @@ class EventAddAndEditFragmentViewModel(
                             addressLine = eventAddressLine,
                             description = eventDescription,
                             country = cityName.country,
-                            status = eventStatus
+                            status = eventStatus,
+                            weather = Weather()
                         )
                     )
                 )
-            } catch (e: IllegalStateException) {
-                SearchListState.Error(STATE_EXCEPTION)
-            }
         }
     }
 
     fun fetchField(id: Int) {
         viewModelScope.launch {
-            _state.value = try {
-                SearchListState.Editing(eventRepository.getEvent(id))
-            } catch (e: IllegalStateException) {
-                SearchListState.Error(STATE_EXCEPTION)
-            }
+            _state.value = SearchListState.Editing(eventRepository.getEvent(id))
         }
     }
 

@@ -1,4 +1,4 @@
-package com.eriksargsyan.eventplanner.screens.eventAddAndEdit
+package com.eriksargsyan.eventplanner.screens.eventAddAndEdit.datePicker
 
 import android.app.DatePickerDialog
 import android.app.Dialog
@@ -17,7 +17,7 @@ class DatePickerFragment: DialogFragment(), DatePickerDialog.OnDateSetListener {
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
-        val day = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
 
         return DatePickerDialog(requireContext(), this, year, month, day)
 

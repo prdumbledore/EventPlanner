@@ -4,7 +4,8 @@ import com.eriksargsyan.eventplanner.data.network.EventAPI
 import com.eriksargsyan.eventplanner.util.Constants.BASE_URL
 import com.eriksargsyan.eventplanner.util.Dispatchers
 import com.eriksargsyan.eventplanner.util.IO
-import com.eriksargsyan.eventplanner.util.NetworkCityNameMapper
+import com.eriksargsyan.eventplanner.util.mappers.NetworkCityNameMapper
+import com.eriksargsyan.eventplanner.util.mappers.NetworkWeatherMapper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -52,7 +53,11 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideNetworkMapper(): NetworkCityNameMapper = NetworkCityNameMapper()
+    fun provideNetworkCityNameMapper(): NetworkCityNameMapper = NetworkCityNameMapper()
+
+    @Provides
+    @Singleton
+    fun provideNetworkWeatherMapper(): NetworkWeatherMapper = NetworkWeatherMapper()
 
     @Provides
     @IO

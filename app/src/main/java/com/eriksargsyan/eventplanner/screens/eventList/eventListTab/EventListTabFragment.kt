@@ -2,9 +2,7 @@ package com.eriksargsyan.eventplanner.screens.eventList.eventListTab
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.databinding.FragmentEventListTabBinding

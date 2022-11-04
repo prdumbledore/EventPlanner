@@ -3,6 +3,7 @@ package com.eriksargsyan.eventplanner.screens.eventViewing
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -44,13 +45,9 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            drawingViewId = R.id.nav_graph
-            scrimColor = Color.TRANSPARENT
-            setAllContainerColors(com.google.android.material.R.attr.colorOnSurface)
-        }
-        eventId = args.eventId
         context.appComponent.inject(this)
+
+        eventId = args.eventId
         (activity as AppCompatActivity).supportActionBar?.title = args.eventName
     }
 
@@ -58,21 +55,28 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // check status change
         onCheckedStateChanged()
 
+        // load appbar menu
         menuLoading()
 
+        // card motion
+        enterTransition()
+
         with(binding) {
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
                 eventViewingViewModel.state.collect { eventState ->
                     when (eventState) {
                         is EventViewingState.Loading -> {
                             loadingField.progressBar.visibility = View.VISIBLE
+                            chipGroup.visibility = View.GONE
                             eventViewingViewModel.fetchEventDetails(eventId)
                         }
                         is EventViewingState.Success -> {
                             loadingField.progressBar.visibility = View.GONE
                             event = eventState.event
+                            chipGroup.visibility = View.VISIBLE
                             fillField(eventState.event)
                         }
                         is EventViewingState.Delete -> {
@@ -80,9 +84,6 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
                                 EventViewingFragmentDirections
                                     .actionEventViewingFragmentToEventListTabFragment()
                             )
-                        }
-                        is EventViewingState.Error -> {
-                            eventViewingViewModel.setLoadingState()
                         }
                     }
                 }
@@ -95,7 +96,9 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
         binding.apply {
             eventDate.text = dateToDMY(event.date)
             weatherIcon.setImageResource(R.drawable.baseline_double_dash_24dp)
-            weatherTemp.text = getString(R.string.weather_temp)
+            if (event.weather.weatherTemp.isNotEmpty())
+                weatherTemp.text = root
+                    .resources.getString(R.string.weather_temp, event.weather.weatherTemp)
             eventPlace.text = if (event.addressLine.isEmpty()) event.cityName
             else " ${event.cityName}, ${event.addressLine}"
             eventDescription.text = event.description
@@ -139,6 +142,14 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
             eventViewingViewModel.setNewEventStatus(
                 event.copy(status = EventStatus.fromId(binding.chipGroup.checkedChipId))
             )
+        }
+    }
+
+    private fun enterTransition() {
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_graph
+            scrimColor = Color.TRANSPARENT
+            setAllContainerColors(com.google.android.material.R.attr.colorOnSurface)
         }
     }
 

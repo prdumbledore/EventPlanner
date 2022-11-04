@@ -6,11 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eriksargsyan.eventplanner.data.EventRepository
 import com.eriksargsyan.eventplanner.data.model.domain.Event
-import com.eriksargsyan.eventplanner.screens.eventList.EventListState
-import com.eriksargsyan.eventplanner.util.ErrorConstants.STATE_EXCEPTION
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -24,40 +21,24 @@ class EventViewingViewModel(
     val state: StateFlow<EventViewingState> = _state
 
     fun fetchEventDetails(id: Int) {
-        viewModelScope.launch {
-            _state.value = try {
-                EventViewingState.Success(eventRepository.getEvent(id))
-            } catch (e: IllegalStateException) {
-                EventViewingState.Error(STATE_EXCEPTION)
-            }
+        viewModelScope.launch() {
+            _state.value = EventViewingState.Success(eventRepository.getEvent(id))
         }
     }
 
     fun deleteEvent(id: Int) {
         viewModelScope.launch {
-            _state.value = try {
-                eventRepository.deleteEvent(id)
-                EventViewingState.Delete
-            } catch (e: IllegalStateException) {
-                EventViewingState.Error(STATE_EXCEPTION)
-            }
+            eventRepository.deleteEvent(id)
+            _state.value = EventViewingState.Delete
         }
 
     }
 
     fun setNewEventStatus(event: Event) {
         viewModelScope.launch {
-            _state.value = try {
-                EventViewingState.Success(eventRepository.saveEvent(event))
-            } catch (e: IllegalStateException) {
-                EventViewingState.Error(STATE_EXCEPTION)
-            }
+            EventViewingState.Success(eventRepository.saveEvent(event))
         }
 
-    }
-
-    fun setLoadingState() {
-        _state.value = EventViewingState.Loading
     }
 
     class EventViewingViewModelFactory @AssistedInject constructor(

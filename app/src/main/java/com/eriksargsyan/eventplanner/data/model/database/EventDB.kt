@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
+import com.eriksargsyan.eventplanner.data.model.domain.Weather
 import com.eriksargsyan.eventplanner.util.Constants.TABLE_NAME
 import java.util.*
 
@@ -41,6 +42,9 @@ data class EventDB(
     @ColumnInfo(name = "event_status")
     val status: EventStatus,
 
+    @ColumnInfo(name = "event_weather")
+    val weather: Weather,
+
     )
 
 class DateConverter {
@@ -62,8 +66,25 @@ class StatusConverter {
     }
 
     @TypeConverter
-    fun fromDate(eventStatus: EventStatus): Int {
+    fun fromStatus(eventStatus: EventStatus): Int {
         return eventStatus.status
+    }
+}
+
+class WeatherConverter {
+    @TypeConverter
+    fun toWeather(weather: String): Weather {
+        val components = weather.split(",")
+        return Weather(
+            weatherTemp = components[0],
+            weatherIcon = components[1],
+            date = components[2]
+        )
+    }
+
+    @TypeConverter
+    fun fromWeather(weather: Weather): String {
+        return "${weather.weatherTemp},${weather.weatherIcon},${weather.date}"
     }
 }
 

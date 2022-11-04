@@ -1,6 +1,7 @@
 package com.eriksargsyan.eventplanner.screens.eventList
 
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.databinding.ItemLayoutEventBinding
 
 import com.eriksargsyan.eventplanner.util.EventTxtTransform.dateToDMY
+import kotlinx.coroutines.withContext
 
 
 class EventListAdapter(
@@ -35,11 +37,12 @@ class EventListAdapter(
 
         fun bind(listItem: Event) {
             with(binding) {
-
                 eventName.text = listItem.eventName
                 eventPlace.text = listItem.cityName
                 weatherIcon.setImageResource(R.drawable.baseline_double_dash_24dp)
-                weatherTemp.text = "st"
+                if (listItem.weather.weatherTemp.isNotEmpty())
+                    weatherTemp.text = root
+                        .resources.getString(R.string.weather_temp, listItem.weather.weatherTemp)
                 eventDate.text = dateToDMY(listItem.date)
                 cardEvent.setOnClickListener {
                     onCardClickListener.invoke(listItem, cardEvent)

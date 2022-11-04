@@ -6,7 +6,7 @@ import android.content.Context
 import com.eriksargsyan.eventplanner.data.database.EventDao
 import com.eriksargsyan.eventplanner.data.database.EventDatabase
 import com.eriksargsyan.eventplanner.util.Constants.DATABASE_NAME
-import com.eriksargsyan.eventplanner.util.DatabaseMapper
+import com.eriksargsyan.eventplanner.util.mappers.DatabaseMapper
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -5,7 +5,7 @@
     <string name="event_create_str">Event Create</string>
     <string name="event_edit_str">Event Edit</string>
     <string name="event_name">Event Name</string>
-    <string name="weather_temp">9°C</string>
+    <string name="weather_temp">%1$s °C</string>
     <string name="weather_icon">Weather Icon</string>
     <string name="card_event_transition_name">Transition Name for Card</string>
     <string name="cancel">Cancel</string>

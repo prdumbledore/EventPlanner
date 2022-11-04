@@ -25,6 +25,9 @@ data class Event(
     val country: String,
 
     val status: EventStatus,
+
+    val weather: Weather,
+
     )
 
 enum class EventStatus(val id: Int, val status: Int) {

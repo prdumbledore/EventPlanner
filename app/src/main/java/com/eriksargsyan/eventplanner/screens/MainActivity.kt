@@ -1,6 +1,7 @@
 package com.eriksargsyan.eventplanner.screens
 
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
@@ -9,6 +10,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.eriksargsyan.eventplanner.R
 import com.eriksargsyan.eventplanner.databinding.ActivityMainBinding
+import com.eriksargsyan.eventplanner.screens.eventList.EventListFragment
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,7 +33,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)

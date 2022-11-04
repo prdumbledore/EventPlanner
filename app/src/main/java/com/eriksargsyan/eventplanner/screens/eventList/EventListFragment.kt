@@ -3,16 +3,12 @@ package com.eriksargsyan.eventplanner.screens.eventList
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import androidx.cardview.widget.CardView
-import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.eriksargsyan.eventplanner.R
@@ -22,8 +18,8 @@ import com.eriksargsyan.eventplanner.databinding.FragmentEventListBinding
 import com.eriksargsyan.eventplanner.screens.base.BaseFragment
 import com.eriksargsyan.eventplanner.screens.eventList.eventListTab.EventListTabFragmentDirections
 import com.eriksargsyan.eventplanner.util.Constants.ARG_OBJECT
-import com.google.android.material.chip.ChipGroup
 import com.google.android.material.transition.MaterialElevationScale
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 
@@ -73,7 +69,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         // Set cards to RecyclerView
         updateRecycler()
 
-        binding.apply {
+        with(binding) {
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
 
@@ -82,6 +78,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
                         is EventListState.Loading -> {
                             loadingField.progressBar.visibility = View.VISIBLE
                             eventListViewModel.fetchEvents()
+
                         }
                         is EventListState.Success -> {
                             loadingField.progressBar.visibility = View.GONE
@@ -99,11 +96,11 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
 
         }
 
-
     }
 
+
     private fun updateRecycler() {
-        binding.recyclerEventList.apply {
+        binding.recyclerEvent.apply {
             setHasFixedSize(true)
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = eventAdapter
@@ -150,7 +147,7 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
 
     private fun recyclerEventListScrollListener() {
         with(binding) {
-            recyclerEventList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            recyclerEvent.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     if (dy > 0) {
@@ -178,12 +175,21 @@ class EventListFragment : BaseFragment<FragmentEventListBinding>({ inflate, cont
         val myPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 eventListViewModel.setLoadingState()
+                hideFab()
+                binding.eventAdderFAB.show()
             }
         }
         parentFragment
             ?.view
             ?.findViewById<ViewPager2>(R.id.pager)
             ?.registerOnPageChangeCallback(myPageChangeCallback)
+    }
+
+    private fun hideFab() {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            delay(3000)
+            binding.eventAdderFAB.hide()
+        }
     }
 
 }
