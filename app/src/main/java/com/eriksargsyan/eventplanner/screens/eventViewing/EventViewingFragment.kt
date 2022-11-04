@@ -121,6 +121,7 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
             eventDescription.text = event.description
             eventStatus = event.status.status
             chipGroup.check(event.status.id)
+            chipGroup.isClickable = false
         }
     }
 
@@ -159,6 +160,7 @@ class EventViewingFragment : BaseFragment<FragmentEventViewingBinding>({ inflate
             eventViewingViewModel.setNewEventStatus(
                 event.copy(status = EventStatus.fromId(binding.chipGroup.checkedChipId))
             )
+            binding.chipGroup.isClickable = true
         }
     }
 

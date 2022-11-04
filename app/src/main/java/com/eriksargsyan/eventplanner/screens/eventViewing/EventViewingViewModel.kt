@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eriksargsyan.eventplanner.data.EventRepository
 import com.eriksargsyan.eventplanner.data.model.domain.Event
-import com.eriksargsyan.eventplanner.screens.eventAddAndEdit.SearchListState
 import com.eriksargsyan.eventplanner.util.ErrorConstants
 import com.eriksargsyan.eventplanner.util.ErrorConstants.NO_NETWORK_CONNECTION
 import dagger.assisted.AssistedFactory
@@ -14,6 +13,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 
@@ -25,7 +25,7 @@ class EventViewingViewModel(
     val state: StateFlow<EventViewingState> = _state
 
     fun fetchEventDetails(id: Int) {
-        viewModelScope.launch  {
+        viewModelScope.launch {
             _state.value = EventViewingState.Success(eventRepository.getEvent(id))
         }
     }
@@ -44,6 +44,8 @@ class EventViewingViewModel(
                 EventViewingState.Success(eventRepository.saveEvent(event))
             } catch (e: UnknownHostException) {
                 EventViewingState.Error(NO_NETWORK_CONNECTION)
+            } catch (e: SocketTimeoutException) {
+                EventViewingState.Error(ErrorConstants.SOCKET_TIMEOUT_EXCEPTION)
             }
         }
 

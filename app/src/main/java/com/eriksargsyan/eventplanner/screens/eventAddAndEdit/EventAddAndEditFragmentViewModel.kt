@@ -9,12 +9,14 @@ import com.eriksargsyan.eventplanner.data.model.domain.Event
 import com.eriksargsyan.eventplanner.data.model.domain.EventStatus
 import com.eriksargsyan.eventplanner.data.model.domain.Weather
 import com.eriksargsyan.eventplanner.util.ErrorConstants.NO_NETWORK_CONNECTION
+import com.eriksargsyan.eventplanner.util.ErrorConstants.SOCKET_TIMEOUT_EXCEPTION
 import com.eriksargsyan.eventplanner.util.ErrorConstants.UNKNOWN_HOST_EXCEPTION
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 
@@ -35,6 +37,9 @@ class EventAddAndEditFragmentViewModel(
                 } catch (e: UnknownHostException) {
                     e.printStackTrace()
                     SearchListState.Error(UNKNOWN_HOST_EXCEPTION)
+                } catch (e: SocketTimeoutException) {
+                    e.printStackTrace()
+                    SearchListState.Error(SOCKET_TIMEOUT_EXCEPTION)
                 }
             } else {
                 SearchListState.Error(NO_NETWORK_CONNECTION)

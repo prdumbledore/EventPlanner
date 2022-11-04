@@ -5,7 +5,7 @@
     android:viewportHeight="7000">
     <path
         android:name="First dash"
-        android:fillColor="?attr/colorOnBackground"
+        android:fillColor="?attr/colorOnPrimary"
         android:pathData="m2400 3200h2200v600h-2200v-600z" />
     <path
         android:name="First dash"

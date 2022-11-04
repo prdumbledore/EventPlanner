@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.eriksargsyan.eventplanner.R
 
-open class BaseFragment<BINDING: ViewBinding>(
+open class BaseFragment<BINDING : ViewBinding>(
     val inflateFun: (
         inflate: LayoutInflater, container: ViewGroup?
     ) -> BINDING
